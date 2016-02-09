@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">AdCar</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="gps_button">Gps Button</string>
+    <string name="other_button">Other Button</string>
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+    <string name="time_label">Time</string>
+    <string name="flush_coordinates">Flush Coordinates</string>
+    <string name="title_activity_table">TableActivity</string>
+    <string name="show_coordinates">History</string>
+    <string name="network_call">Network Call</string>
+</resources>
