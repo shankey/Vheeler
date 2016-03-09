@@ -5,15 +5,9 @@ package adcar.com.network;
  */
 public class UrlPaths {
 
-    public static final String SCHEME_HTTP_TYPE = "http://";
-    public static final String EXTENSION_HTML = ".html";
-
-    public static final String BASE_URL_VHEELER = "planning-engine-frontend-qa.crowdfireapp.com:80";
-    public static final String BASE_URL_NOTIFICATION = "null";
-
-    public static final String PRESCRIPTION_SCHEMA_URL = "/planning-engine/prescriptions";
-
-    public static final String GET_AREAS = "http://www.mocky.io/v2/56b505ff0f0000ca21875627";
-    public static final String POST_COORDINATES = "http://www.mocky.io/v2/56b505ff0f0000ca21875627";
+    public static final String GET_AREAS = "https://vheeler-shankey-1.c9users.io/area";
+    public static final String POST_COORDINATES = "https://vheeler-shankey-1.c9users.io/coordinate";
+    public static final String GET_VERSIONS = "https://vheeler-shankey-1.c9users.io/versions";
+    public static final String GET_ADS = "https://vheeler-shankey-1.c9users.io/ads";
 
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AdCar</string>
+    <string name="app_name">Vheeler</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -12,4 +12,5 @@
     <string name="title_activity_table">TableActivity</string>
     <string name="show_coordinates">History</string>
     <string name="network_call">Network Call</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 </resources>

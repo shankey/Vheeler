@@ -14,6 +14,7 @@ import adcar.com.factory.Factory;
 import adcar.com.database.dao.CoordinateDAO;
 import adcar.com.handler.AreaHandler;
 import adcar.com.handler.CoordinatesHandler;
+import adcar.com.handler.VersionHandler;
 import adcar.com.model.CoordinatesEntity;
 import adcar.com.utility.Utility;
 
@@ -54,7 +55,7 @@ public class ScheduleReciever extends BroadcastReceiver {
 
         //run every 60 minutes
         if(timeKeeper%60==0){
-            new AreaHandler().SyncAreas();
+            new VersionHandler().SyncVersions();
         }
 
 
@@ -65,11 +66,5 @@ public class ScheduleReciever extends BroadcastReceiver {
         timeKeeper = timeKeeper + 15;
     }
 
-    public CoordinateDAO getCoordinateDAO(Context context){
-        if(coordinateDAO == null){
-            coordinateDAO = new CoordinateDAO(context);
-        }
 
-        return coordinateDAO;
-    }
 }

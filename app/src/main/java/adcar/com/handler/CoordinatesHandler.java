@@ -23,9 +23,8 @@ import adcar.com.network.UrlPaths;
 /**
  * Created by aditya on 06/02/16.
  */
-public class CoordinatesHandler {
+public class CoordinatesHandler extends Handler {
 
-    public static Gson gson = new GsonBuilder().create();
     public static CoordinateDAO coordinateDAO = (CoordinateDAO)Factory.getInstance().get(Factory.DAO_COORDINATE);
 
     public void sendCoordinatesToServer(final List<CoordinatesEntity> li){

@@ -1,0 +1,201 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:id="@+id/main_view"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/time_label"
+        android:id="@+id/time_label_id"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/time_text"
+        android:layout_alignTop="@+id/time_label_id"
+        android:layout_toRightOf="@+id/time_label_id"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/latitude_label"
+        android:id="@+id/latitude_label_id"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/time_label_id"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/latitude_text"
+        android:layout_alignTop="@+id/latitude_label_id"
+        android:layout_toRightOf="@+id/latitude_label_id"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/longitude_label"
+        android:id="@+id/longitude_label_id"
+        android:layout_below="@+id/latitude_label_id"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/longitude_text"
+        android:layout_alignTop="@+id/longitude_label_id"
+        android:layout_toRightOf="@+id/longitude_label_id"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Area"
+        android:id="@+id/area_label_id"
+        android:layout_below="@+id/longitude_label_id"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/area_text"
+        android:layout_alignTop="@+id/area_label_id"
+        android:layout_toRightOf="@+id/area_label_id"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/flush_coordinates"
+        android:id="@+id/flush_coordinates_btn"
+        android:layout_above="@+id/network_call_btn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/show_coordinates"
+        android:id="@+id/show_coordinates_btn"
+        android:layout_above="@+id/internet_check_btn"
+        android:layout_toRightOf="@+id/flush_coordinates_btn"
+        android:layout_toEndOf="@+id/flush_coordinates_btn" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/network_call"
+        android:id="@+id/network_call_btn"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check Internet"
+        android:id="@+id/internet_check_btn"
+        android:layout_alignTop="@+id/network_call_btn"
+        android:layout_toRightOf="@+id/network_call_btn"
+        android:layout_toEndOf="@+id/network_call_btn" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sync Area"
+        android:id="@+id/sync_area_id"
+        android:layout_above="@+id/internet_check_btn"
+        android:layout_toRightOf="@+id/show_coordinates_btn"
+        android:layout_toEndOf="@+id/show_coordinates_btn" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get Image"
+        android:id="@+id/get_image_btn"
+        android:layout_below="@+id/sync_area_id"
+        android:layout_toRightOf="@+id/internet_check_btn"
+        android:layout_toEndOf="@+id/internet_check_btn" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check Area"
+        android:id="@+id/check_area_btn"
+        android:layout_above="@+id/flush_coordinates_btn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check Versions"
+        android:id="@+id/check_versions_btn"
+        android:layout_above="@+id/flush_coordinates_btn"
+        android:layout_toRightOf="@+id/check_area_btn"
+        android:layout_toEndOf="@+id/check_area_btn" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Ads"
+        android:id="@+id/show_ads_btn"
+        android:layout_above="@+id/check_area_btn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Areas"
+        android:id="@+id/show_areas_btn"
+        android:layout_above="@+id/check_area_btn"
+        android:layout_toRightOf="@+id/check_area_btn"
+        android:layout_toEndOf="@+id/check_area_btn" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ad_view"
+        android:layout_alignRight="@+id/area_text"
+        android:layout_alignEnd="@+id/area_text"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Display Ad"
+        android:id="@+id/display_ad_btn"
+        android:layout_alignTop="@+id/show_areas_btn"
+        android:layout_toRightOf="@+id/show_areas_btn"
+        android:layout_toEndOf="@+id/show_areas_btn" />
+
+</RelativeLayout>

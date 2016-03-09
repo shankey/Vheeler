@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import adcar.com.model.Area;
+import adcar.com.model.Areas;
 import adcar.com.model.Coordinate;
 
 /**
@@ -57,6 +58,21 @@ public class AreaDAO extends DAO {
 
     }
 
+    public void deleteArea(){
+        SQLiteDatabase db = dbHandler.getWritableDatabase();
+
+        try{
+            db.delete(TABLE_AREA, null, null);
+        }catch (Exception e){
+            Log.i("ERROR", e.toString());
+        } finally {
+            db.close();
+        }
+
+    }
+
+
+
     public List<Area> getAreas(){
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
@@ -67,10 +83,6 @@ public class AreaDAO extends DAO {
 
         if(cursor.moveToFirst()){
             do{
-                Log.i("DB QUERY", cursor.getString(cursor.getColumnIndex(KEY_ID)));
-                Log.i("DB QUERY", cursor.getString(cursor.getColumnIndex(KEY_LATITUDE)));
-                Log.i("DB QUERY", cursor.getString(cursor.getColumnIndex(KEY_LONGITUDE)));
-                Log.i("DB QUERY", cursor.getString(cursor.getColumnIndex(KEY_AREA_ID)));
 
                 Integer areaId = cursor.getInt(cursor.getColumnIndex(KEY_AREA_ID));
 

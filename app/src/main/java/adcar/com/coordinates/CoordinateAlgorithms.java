@@ -1,6 +1,7 @@
 package adcar.com.coordinates;
 
 import android.location.Location;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.PolyUtil;
@@ -26,7 +27,8 @@ public class CoordinateAlgorithms {
     }
 
     public static Integer getInsideAreaId(Coordinate currentCoordinate){
-        List<Area> areas = Cache.getCache().getArea();
+        List<Area> areas = Cache.getCache().getAreas().getAreas();
+        Log.i("AREA", areas.toString());
         LatLng currentLatLng = new LatLng(currentCoordinate.getLatitude(),currentCoordinate.getLongitude());
 
         for(Area area: areas){

@@ -7,16 +7,7 @@ import java.util.List;
  */
 public class Areas {
 
-    String version;
     List<Area> areas;
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
 
     public List<Area> getAreas() {
         return areas;
@@ -28,6 +19,6 @@ public class Areas {
 
     @Override
     public String toString(){
-        return "version = " + version + "areas = " + areas.toString();
+        return "areas = " + areas.toString();
     }
 }

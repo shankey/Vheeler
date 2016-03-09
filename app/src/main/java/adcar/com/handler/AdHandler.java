@@ -11,13 +11,15 @@ import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import adcar.com.cache.Cache;
 import adcar.com.database.dao.AdDAO;
-import adcar.com.database.dao.AreaDAO;
 import adcar.com.factory.Factory;
 import adcar.com.model.Ad;
 import adcar.com.model.Ads;
-import adcar.com.model.Area;
-import adcar.com.model.Areas;
+
 import adcar.com.network.CustomStringRequest;
 import adcar.com.network.ImageDownload;
 import adcar.com.network.NetworkManager;
@@ -28,28 +30,22 @@ import adcar.com.utility.Utility;
 /**
  * Created by aditya on 09/02/16.
  */
-public class AdHandler {
+public class AdHandler extends Handler {
 
     public static AdDAO adDAO = (AdDAO) Factory.getInstance().get(Factory.DAO_AD);
-    Gson gson = new GsonBuilder().create();
+
     public static NetworkManager networkManager = (NetworkManager) Factory.getInstance().get(Factory.NETWORK_MANAGER);
 
     public void SyncAds(){
         Log.i("AREASYNC", "Trying to sync areas");
         CustomStringRequest csr = new CustomStringRequest(Request.Method.GET,
-                UrlPaths.GET_AREAS,
+                UrlPaths.GET_ADS,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Gson gson = new GsonBuilder().create();
-                        Ads ads = gson.fromJson(response.toString(), Ads.class);
-                        Log.i("ADSSYNC", "Response = "+ ads.toString());
-                        SharedPreferences sp = (SharedPreferences) Factory.getInstance().get(Factory.SHARED_PREFERENCES);
 
-                        String existingVersion = Utility.getFromSharedPreferences(Strings.VERSION_AD);
-                        Log.i("ADSSYNC", "Existing Version = "+ existingVersion);
-                        if( existingVersion == null || existingVersion.isEmpty() ||
-                                (Integer.parseInt(existingVersion) < Integer.parseInt(ads.getVersion()))){
+                        Ads ads = gson.fromJson(response.toString(), Ads.class);
+                        Log.i("ADSSYNC", "Response = " + ads.toString());
 
                             //////////// LOGS //////////////
                             Log.i("ADSSYNC", "New Area Saved ");
@@ -57,23 +53,22 @@ public class AdHandler {
                                     "New Ad Sync", Toast.LENGTH_SHORT).show();
                             //////////// END LOGS /////////////////
 
-                            Utility.saveToSharedPreference(Strings.VERSION_AD, ads.getVersion());
 
+                            Map<Integer, Ad> adMap = new HashMap<>();
+                            adDAO.deleteAd();
                             for(Ad ad: ads.getAds()){
                                 new ImageDownload().downloadImage(ad);
-                            }
-                        }else{
-                            Toast.makeText((Context)Factory.getInstance().get(Factory.BASE_CONTEXT),
-                                    "Old Area Retain", Toast.LENGTH_SHORT).show();
-                        }
+                                adDAO.addAd(ad);
 
-                        Log.i("ADSSYNC", "End Of Sync Sucees "+ ads);
+                                adMap.put(ad.getAreaId(), ad);
+                            }
+                        Cache.getCache().setAdMap(adMap);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.i("AREASYNC", "End Of Sync FAILURE " + error);
+
                     }
                 });
 

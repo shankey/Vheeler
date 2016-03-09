@@ -2,13 +2,19 @@ package adcar.com.utility;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.BatteryManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -28,10 +34,18 @@ public class Utility {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    public static String getDeviceId(){
+        Context context = (Context)Factory.getInstance().get(Factory.BASE_CONTEXT);
+         String androidId = Settings.Secure.getString(context.getContentResolver(),
+                 Settings.Secure.ANDROID_ID);
+         return androidId;
+    }
+
     public static void saveToSharedPreference(String key, String value){
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(key, value);
-        editor.commit();
+        Boolean didCommit = editor.commit();
+        Log.i("VERSION", key + " " + didCommit);
     }
 
     public static String getFromSharedPreferences(String key){
@@ -60,5 +74,31 @@ public class Utility {
 
         Log.i("IMAGE", directory.getAbsolutePath());
         return directory.getAbsolutePath();
+    }
+
+    public static Bitmap getFromInternalStorage(Integer areaId) throws Exception{
+
+        ContextWrapper cw = new ContextWrapper((Context)Factory.getInstance().get(Factory.BASE_CONTEXT));
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("ad_images", Context.MODE_PRIVATE);
+        // Create imageDir
+        File adPath=new File(directory,areaId+".jpg");
+
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(adPath.getAbsolutePath(), options);
+
+        return  bitmap;
+    }
+
+    public static Boolean isCharging(){
+        Context context = (Context)Factory.getInstance().get(Factory.BASE_CONTEXT);
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, ifilter);
+        int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                status == BatteryManager.BATTERY_STATUS_FULL;
+        return  isCharging;
     }
 }

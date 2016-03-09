@@ -10,6 +10,8 @@ public class CoordinatesEntity {
     Integer id;
     Coordinate coordinate;
     Timestamp timestamp;
+    Integer adId;
+    Integer areaId;
 
     public Integer getId() {
         return id;
@@ -33,5 +35,21 @@ public class CoordinatesEntity {
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Integer getAdId() {
+        return adId;
+    }
+
+    public void setAdId(Integer adId) {
+        this.adId = adId;
+    }
+
+    public Integer getAreaId() {
+        return areaId;
+    }
+
+    public void setAreaId(Integer areaId) {
+        this.areaId = areaId;
     }
 }

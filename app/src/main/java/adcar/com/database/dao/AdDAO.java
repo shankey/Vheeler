@@ -72,6 +72,19 @@ public class AdDAO extends DAO {
         db.close();
     }
 
+    public void deleteAd(){
+        SQLiteDatabase db = dbHandler.getWritableDatabase();
+        Log.i("DB QUERY", "delete all ads");
+        try{
+            db.delete(TABLE_ADS, null, null);
+        }catch (Exception e){
+            Log.i("ERROR", e.toString());
+        } finally {
+            db.close();
+        }
+
+    }
+
     public Map<Integer, Ad> getAds(){
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
@@ -84,7 +97,7 @@ public class AdDAO extends DAO {
             do{
                 Log.i("DB QUERY", "" + cursor.getInt(cursor.getColumnIndex(KEY_ID)));
                 Log.i("DB QUERY", "" + cursor.getInt(cursor.getColumnIndex(KEY_AREA_ID)));
-                Log.i("DB QUERY", cursor.getString(cursor.getColumnIndex(KEY_AD_URL)));
+                Log.i("DB QUERY", "" + cursor.getString(cursor.getColumnIndex(KEY_AD_URL)));
 
                 Ad ad = new Ad();
                 ad.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
