@@ -12,6 +12,7 @@ import adcar.com.database.dao.AreaDAO;
 import adcar.com.model.Ad;
 import adcar.com.model.Area;
 import adcar.com.model.Areas;
+import adcar.com.utility.Utility;
 
 /**
  * Created by aditya on 02/02/16.
@@ -25,6 +26,8 @@ public class Cache {
     public Map<Integer, Ad> adMap;
 
     public static Integer LAST_AD = null;
+
+    public static String deviceId = Utility.getDeviceId();
 
     private Cache(){
     }

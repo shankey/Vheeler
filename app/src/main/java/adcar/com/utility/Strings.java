@@ -11,4 +11,5 @@ public class Strings {
     public static String AD_IMAGES = "ad_images";
     public static String AREA = "AREA";
     public static String ADS = "ADS";
+    public static String MAIN_ACTIVITY = "ADS";
 }

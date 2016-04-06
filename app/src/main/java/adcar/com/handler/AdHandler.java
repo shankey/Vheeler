@@ -45,6 +45,7 @@ public class AdHandler extends Handler {
                     public void onResponse(String response) {
 
                         Ads ads = gson.fromJson(response.toString(), Ads.class);
+                        Log.i("ADSSYNC", "Raw Response = " + response.toString());
                         Log.i("ADSSYNC", "Response = " + ads.toString());
 
                             //////////// LOGS //////////////

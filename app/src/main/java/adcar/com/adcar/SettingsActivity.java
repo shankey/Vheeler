@@ -1,14 +1,12 @@
 package adcar.com.adcar;
 
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -24,8 +22,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.Calendar;
-import java.util.List;
-import java.util.Set;
 
 import adcar.com.cache.Cache;
 import adcar.com.coordinates.CoordinateAlgorithms;
@@ -41,11 +37,11 @@ import adcar.com.model.Ad;
 import adcar.com.model.Area;
 import adcar.com.model.Areas;
 import adcar.com.model.Coordinate;
+import adcar.com.model.CoordinateBatchEntity;
 import adcar.com.network.CustomStringRequest;
 import adcar.com.network.ImageDownload;
 import adcar.com.network.NetworkManager;
 import adcar.com.network.UrlPaths;
-import adcar.com.polling.ScheduleReciever;
 import adcar.com.utility.Strings;
 import adcar.com.utility.Utility;
 
@@ -130,7 +126,10 @@ public class SettingsActivity extends AppCompatActivity {
         flush_coordinates_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new CoordinatesHandler().sendCoordinatesToServer(coordinateDAO.getCoordinates());
+                CoordinateBatchEntity coordinateBatchEntity = new CoordinateBatchEntity();
+                coordinateBatchEntity.setLi(coordinateDAO.getCoordinates());
+                coordinateBatchEntity.setDeviceId(Cache.deviceId);
+                new CoordinatesHandler().sendCoordinatesToServer(coordinateBatchEntity);
             }
         });
 
@@ -272,15 +271,15 @@ public class SettingsActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    public void setScheduler(){
-        Log.i("SCHEDULER", "setting scheduler");
-        Calendar cal = Calendar.getInstance();
-        Intent intent = new Intent(this, ScheduleReciever.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 15 * 1000, pendingIntent);
-        Toast.makeText(this, "Set Scheduler last line", Toast.LENGTH_LONG).show();
-    }
+//    public void setScheduler(){
+//        Log.i("SCHEDULER", "setting scheduler");
+//        Calendar cal = Calendar.getInstance();
+//        Intent intent = new Intent(this, ScheduleReceiver.class);
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+//        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 15 * 1000, pendingIntent);
+//        Toast.makeText(this, "Set Scheduler last line", Toast.LENGTH_LONG).show();
+//    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

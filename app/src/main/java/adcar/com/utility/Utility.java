@@ -56,9 +56,10 @@ public class Utility {
 
         ContextWrapper cw = new ContextWrapper((Context)Factory.getInstance().get(Factory.BASE_CONTEXT));
         // path to /data/data/yourapp/app_data/imageDir
-        File directory = cw.getDir("ad_images", Context.MODE_PRIVATE);
+        File directory = cw.getDir("ad_images", Context.MODE_WORLD_READABLE);
         // Create imageDir
         File adPath=new File(directory,areaId+".jpg");
+        Log.i("ADSSYNC", "file save path = " + adPath.getAbsolutePath());
 
         FileOutputStream fos = null;
         try {

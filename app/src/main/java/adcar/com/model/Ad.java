@@ -44,6 +44,6 @@ public class Ad {
 
     @Override
     public String toString(){
-        return "Id = " + id + "AreaId = "+ areaId + "URL = " + areaId + "status = " + status;
+        return "Id = " + id + "AreaId = "+ areaId + "URL = " + url + "status = " + status;
     }
 }

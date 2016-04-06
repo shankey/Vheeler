@@ -33,21 +33,26 @@ public class GoogleApiClientListener implements
     }
 
     public void start(){
+        Log.i("GPS", "start of Google APi CLient");
         this.context = activity;
         if (mGoogleApiClient == null) {
+            Log.i("GPS", "init of client");
             mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
+            connect();
         }
     }
 
     public void connect(){
+        Log.d("GPS", "connect");
         mGoogleApiClient.connect();
     }
 
     public void disconnect(){
+        Log.d("GPS", "disconnect");
         mGoogleApiClient.disconnect();
     }
 
@@ -55,6 +60,7 @@ public class GoogleApiClientListener implements
     public void onConnected(Bundle bundle) {
         Log.d("GPS", "Inside On Connected");
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
             Log.d("GPS", "NO Permissions Here");
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -75,11 +81,13 @@ public class GoogleApiClientListener implements
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.d("GPS", "onConnectionSuspended");
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d("GPS", "onConnectionFailed"+ connectionResult.getErrorMessage());
+        Log.d("GPS", "onConnectionFailed 2"+ connectionResult.toString());
 
     }
 

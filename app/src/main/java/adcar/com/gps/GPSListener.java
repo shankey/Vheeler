@@ -47,7 +47,8 @@ public class GPSListener implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         makeUseOfNewLocation(location);
-        Log.i("GPS", "value of coordinatedao = "+coordinateDAO);
+        Log.i("GPS", "value of coordinatedao = " + coordinateDAO);
+        Log.i("GPS", "value of coordinates = "+location.getLatitude() + " - " + location.getLongitude());
     }
 
     private void makeUseOfNewLocation(Location location) {
@@ -68,6 +69,9 @@ public class GPSListener implements LocationListener {
         coordinatesEntity.setCoordinate(coordinate);
         coordinatesEntity.setTimestamp(new Timestamp(calendar.getTime().getTime()));
         coordinatesEntity.setAreaId(areaId);
+        coordinatesEntity.setAdId(areaId);
+        coordinatesEntity.setDeviceId(Cache.deviceId);
+
 
         Log.i("GPS", "Calling sendCoordinateToSErver now");
         sendCoordinatesToServer(coordinatesEntity);

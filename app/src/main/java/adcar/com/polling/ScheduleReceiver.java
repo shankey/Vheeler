@@ -12,19 +12,19 @@ import java.util.List;
 
 import adcar.com.factory.Factory;
 import adcar.com.database.dao.CoordinateDAO;
-import adcar.com.handler.AreaHandler;
 import adcar.com.handler.CoordinatesHandler;
 import adcar.com.handler.VersionHandler;
+import adcar.com.model.CoordinateBatchEntity;
 import adcar.com.model.CoordinatesEntity;
 import adcar.com.utility.Utility;
 
-public class ScheduleReciever extends BroadcastReceiver {
+public class ScheduleReceiver extends BroadcastReceiver {
 
     public static int timeKeeper = 0;
     public static Gson gson = new GsonBuilder().create();
     public static CoordinateDAO coordinateDAO = (CoordinateDAO) Factory.getInstance().get(Factory.DAO_COORDINATE);
 
-    public ScheduleReciever() {
+    public ScheduleReceiver() {
     }
 
     @Override
@@ -36,11 +36,16 @@ public class ScheduleReciever extends BroadcastReceiver {
             if(Utility.isNetworkAvailable(context)){
 
                 final List<CoordinatesEntity> li = coordinateDAO.getCoordinates();
+                CoordinateBatchEntity batchEntity = new CoordinateBatchEntity();
 
                 if(li.size() > 0){
-                    new CoordinatesHandler().sendCoordinatesToServer(li);
+                    batchEntity.setDeviceId(Utility.getDeviceId());
+                    batchEntity.setLi(li);
+                    new CoordinatesHandler().sendCoordinatesToServer(batchEntity);
                 }
             }
+
+
         }
 
         //run every 30 minutes

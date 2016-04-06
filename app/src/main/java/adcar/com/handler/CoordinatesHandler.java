@@ -12,11 +12,15 @@ import com.google.gson.GsonBuilder;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import adcar.com.factory.Factory;
 import adcar.com.database.dao.CoordinateDAO;
+import adcar.com.model.CoordinateBatchEntity;
 import adcar.com.model.CoordinatesEntity;
+import adcar.com.network.CustomStringRequest;
 import adcar.com.network.NetworkManager;
 import adcar.com.network.UrlPaths;
 
@@ -27,29 +31,28 @@ public class CoordinatesHandler extends Handler {
 
     public static CoordinateDAO coordinateDAO = (CoordinateDAO)Factory.getInstance().get(Factory.DAO_COORDINATE);
 
-    public void sendCoordinatesToServer(final List<CoordinatesEntity> li){
+    public void sendCoordinatesToServer(final CoordinateBatchEntity coordinateBatchEntity){
 
-        String jsonCoordinateRequest = gson.toJson(li);
-        JSONObject jsonObject = null;
-        String jsonRequest = gson.toJson(li);
-        Log.i("RESPONSE", jsonRequest);
-            JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST, UrlPaths.POST_COORDINATES,
-                    jsonRequest,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.i("RESPONSE", "Success - sendCoordinateResponse " + response.toString());
-                            coordinateDAO.deleteCoordinate(li);
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.i("RESPONSE", "Failure - sendCoordinateResponse " + error.toString());
-                        }
+        Map<String, String> map = new HashMap<>();
+        map.put("json", gson.toJson(coordinateBatchEntity));
+        CustomStringRequest request = new CustomStringRequest(Request.Method.POST, null, map, UrlPaths.POST_COORDINATES_BATCH,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //coordinateDAO.deleteCoordinate(li);
+                        Log.i("RESPONSE", response.toString());
                     }
-            );
-        NetworkManager nm = (NetworkManager)Factory.getInstance().get(Factory.NETWORK_MANAGER);
-        nm.addToRequestQueue(jor);
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i("RESPONSE", "inside first line onErrorResponse");
+                        //saveCoordinatesToDatabase(coordinatesEntity);
+                        Log.i("RESPONSE", error.toString());
+                    }
+                }
+        );
+        NetworkManager nm = (NetworkManager) Factory.getInstance().get(Factory.NETWORK_MANAGER);
+        nm.addToRequestQueue(request);
     }
 }

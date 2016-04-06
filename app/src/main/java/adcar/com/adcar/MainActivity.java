@@ -1,16 +1,16 @@
 package adcar.com.adcar;
 
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.LocationManager;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,56 +19,43 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.Calendar;
-import java.util.List;
 
-import adcar.com.cache.Cache;
-import adcar.com.coordinates.CoordinateAlgorithms;
-import adcar.com.database.dao.AreaDAO;
 import adcar.com.database.dao.CoordinateDAO;
 import adcar.com.factory.Factory;
+import adcar.com.gps.AndroidGpsListener;
 import adcar.com.gps.GoogleApiClientListener;
-import adcar.com.handler.AdHandler;
-import adcar.com.handler.AreaHandler;
-import adcar.com.handler.CoordinatesHandler;
-import adcar.com.handler.VersionHandler;
-import adcar.com.model.Ad;
-import adcar.com.model.Area;
-import adcar.com.model.Areas;
-import adcar.com.model.Coordinate;
-import adcar.com.network.CustomStringRequest;
-import adcar.com.network.ImageDownload;
-import adcar.com.network.NetworkManager;
-import adcar.com.network.UrlPaths;
-import adcar.com.polling.ScheduleReciever;
-import adcar.com.utility.Strings;
-import adcar.com.utility.Utility;
+import adcar.com.polling.ScheduleReceiver;
 
 
 public class MainActivity extends AppCompatActivity implements
         GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener {
+        GestureDetector.OnDoubleTapListener
+        {
 
 
     GoogleApiClientListener googleApiClientListener = null;
+    AndroidGpsListener androidGpsListener = null;
     CoordinateDAO coordinateDAO = null;
+    LocationManager locationManager = null;
     private GestureDetectorCompat mDetector;
+    public static MainActivity ma;
 
 
     //UI elements
     ImageView ad_main = null;
 
+    public MainActivity(){
+        ma = this;
+    }
+
+    public static MainActivity getInstance(){
+        return ma;
+    }
 
 
     @Override
@@ -79,34 +66,21 @@ public class MainActivity extends AppCompatActivity implements
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().hide();
+        //getSupportActionBar().hide();
+
+        ad_main = (ImageView)findViewById(R.id.ad_main);
 
         mDetector = new GestureDetectorCompat(this,this);
         // Set the gesture detector as the double tap
         // listener.
+
         mDetector.setOnDoubleTapListener(this);
 
-
-        Log.i("GPS", "OnCreate Called");
-
-
-        if(googleApiClientListener == null){
-            googleApiClientListener = new GoogleApiClientListener(this);
-            googleApiClientListener.start();
-        }
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        androidGpsListener = new AndroidGpsListener(this ,locationManager, this.getBaseContext());
+        //Factory.getInstance().set(Factory.ANDROID_GPS_LISTENER, androidGpsListener);
 
         setScheduler();
-
-        ad_main = (ImageView)findViewById(R.id.ad_main);
-        if(Cache.LAST_AD!=null){
-            Bitmap bm = null;
-            try{
-                bm = Utility.getFromInternalStorage(Cache.LAST_AD);
-                ad_main.setImageBitmap(bm);
-            }catch (Exception e){
-                Log.i("VHEELER", "Could Not Retrieve Ad" + e.getStackTrace());
-            }
-        }
 
         coordinateDAO = (CoordinateDAO) Factory.getInstance().get(Factory.DAO_COORDINATE);
 
@@ -130,16 +104,27 @@ public class MainActivity extends AppCompatActivity implements
                 });
     }
 
+    public void updateImageView(final Bitmap bm) {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                Log.i("GPS", "updating on UI thread "+bm);
+                ad_main.setImageBitmap(bm);
+            }
+        });
+    }
+
     @Override
     protected void onStart() {
-        googleApiClientListener.connect();
+        //googleApiClientListener.connect();
+        androidGpsListener.enableLocationUpdates();
         super.onStart();
 
     }
 
     @Override
     protected void onStop() {
-        googleApiClientListener.disconnect();
+        //googleApiClientListener.disconnect();
+        androidGpsListener.disableLocationUpdates();
         super.onStop();
     }
 
@@ -167,6 +152,10 @@ public class MainActivity extends AppCompatActivity implements
         HideToolbar runner = new HideToolbar();
         runner.execute();
         Log.i("GESTURE", "double tap");
+
+        Intent intent = new Intent(this, SettingsActivity.class);
+
+        startActivity(intent);
         return true;
     }
 
@@ -225,12 +214,13 @@ public class MainActivity extends AppCompatActivity implements
     public void setScheduler(){
         Log.i("SCHEDULER", "setting scheduler");
         Calendar cal = Calendar.getInstance();
-        Intent intent = new Intent(this, ScheduleReciever.class);
+        Intent intent = new Intent(this, ScheduleReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 15 * 1000, pendingIntent);
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10 * 1000, pendingIntent);
         Toast.makeText(this, "Set Scheduler last line", Toast.LENGTH_LONG).show();
     }
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -284,4 +274,5 @@ public class MainActivity extends AppCompatActivity implements
     public void setAd_main(ImageView ad_main) {
         this.ad_main = ad_main;
     }
+
 }

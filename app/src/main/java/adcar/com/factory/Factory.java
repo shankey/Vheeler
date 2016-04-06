@@ -2,10 +2,12 @@ package adcar.com.factory;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 
 import adcar.com.database.dao.AdDAO;
 import adcar.com.database.dao.AreaDAO;
 import adcar.com.database.dao.CoordinateDAO;
+import adcar.com.gps.AndroidGpsListener;
 import adcar.com.network.NetworkManager;
 
 /**
@@ -20,6 +22,7 @@ public class Factory {
     public static AdDAO adDAO = null;
     public static NetworkManager networkManager = null;
     public static SharedPreferences sharedPreferences = null;
+    public static AndroidGpsListener androidGpsListener = null;
 
 
     public static String SHARED_PREFFERENCES_FILE = "Vheeler";
@@ -30,6 +33,7 @@ public class Factory {
     public static Integer NETWORK_MANAGER=3;
     public static Integer SHARED_PREFERENCES=4;
     public static Integer DAO_AD = 5;
+    public static Integer ANDROID_GPS_LISTENER = 6;
 
 
     private Factory(){
@@ -48,6 +52,12 @@ public class Factory {
 
     public static Factory getInstance(){
         return factory;
+    }
+
+    public void set(Integer type, Object o){
+        if(type == ANDROID_GPS_LISTENER){
+            androidGpsListener = (AndroidGpsListener)o;
+        }
     }
 
     public Object get(Integer i){
@@ -74,6 +84,10 @@ public class Factory {
 
         if(i == DAO_AD){
             return adDAO;
+        }
+
+        if(i == ANDROID_GPS_LISTENER){
+            return androidGpsListener;
         }
 
         return null;

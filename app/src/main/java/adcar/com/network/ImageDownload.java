@@ -23,7 +23,7 @@ public class ImageDownload {
     NetworkManager nw = (NetworkManager) Factory.getInstance().get(Factory.NETWORK_MANAGER);
 
     public void downloadImage(final Ad ad){
-        ImageRequest request = new ImageRequest(ad.getUrl(),
+        ImageRequest request = new ImageRequest(UrlPaths.BASE_URL + ad.getUrl(),
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap bitmap) {

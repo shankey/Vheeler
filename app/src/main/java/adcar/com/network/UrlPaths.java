@@ -5,9 +5,12 @@ package adcar.com.network;
  */
 public class UrlPaths {
 
-    public static final String GET_AREAS = "https://vheeler-shankey-1.c9users.io/area";
-    public static final String POST_COORDINATES = "https://vheeler-shankey-1.c9users.io/coordinate";
-    public static final String GET_VERSIONS = "https://vheeler-shankey-1.c9users.io/versions";
-    public static final String GET_ADS = "https://vheeler-shankey-1.c9users.io/ads";
+    public static final String BASE_URL = "http://vhee.us-west-2.elasticbeanstalk.com";
+
+    public static final String GET_AREAS = BASE_URL + "/area";
+    public static final String POST_COORDINATES = BASE_URL + "/coordinate";
+    public static final String POST_COORDINATES_BATCH = BASE_URL + "/coordinate_batch";
+    public static final String GET_VERSIONS = BASE_URL + "/versions";
+    public static final String GET_ADS = BASE_URL + "/ads";
 
 }

@@ -33,11 +33,11 @@
         <activity android:name=".TableActivity" />
 
         <receiver
-            android:name="adcar.com.polling.ScheduleReciever"
+            android:name="adcar.com.polling.ScheduleReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="adcar.com.polling.ScheduleReciever" />
+                <action android:name="adcar.com.polling.ScheduleReceiver" />
             </intent-filter>
         </receiver>
 

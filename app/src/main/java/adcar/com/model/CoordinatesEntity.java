@@ -12,6 +12,7 @@ public class CoordinatesEntity {
     Timestamp timestamp;
     Integer adId;
     Integer areaId;
+    String deviceId;
 
     public Integer getId() {
         return id;
@@ -51,5 +52,13 @@ public class CoordinatesEntity {
 
     public void setAreaId(Integer areaId) {
         this.areaId = areaId;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 }
