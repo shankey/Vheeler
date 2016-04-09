@@ -2,6 +2,7 @@ package adcar.com.coordinates;
 
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.PolyUtil;
@@ -9,6 +10,7 @@ import com.google.maps.android.PolyUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import adcar.com.adcar.MainActivity;
 import adcar.com.cache.Cache;
 import adcar.com.model.Area;
 import adcar.com.model.Areas;
@@ -28,6 +30,9 @@ public class CoordinateAlgorithms {
 
     public static Integer getInsideAreaId(Coordinate currentCoordinate){
         List<Area> areas = Cache.getCache().getAreas().getAreas();
+        if(areas == null || areas.isEmpty()){
+            Toast.makeText(MainActivity.getInstance(), "Areas yet to be synced", Toast.LENGTH_SHORT).show();
+        }
         Log.i("AREA", areas.toString());
         LatLng currentLatLng = new LatLng(currentCoordinate.getLatitude(),currentCoordinate.getLongitude());
 

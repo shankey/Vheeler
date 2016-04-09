@@ -11,6 +11,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -141,8 +142,7 @@ public class AndroidGpsListener implements LocationListener {
         }
         Location networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Log.i("GPS", "both = " + gpsLocation.toString());
-        Log.i("GPS", "both = " + networkLocation.toString());
+
         if(gpsLocation == null){
             return networkLocation;
         }
@@ -197,6 +197,7 @@ public class AndroidGpsListener implements LocationListener {
             try{
                 bm = Utility.getFromInternalStorage(areaId);
                 Log.i("GPS", "trying to update with " + areaId + " " + bm);
+                Toast.makeText(activity, "Showing Ad = "+areaId , Toast.LENGTH_LONG).show();
                 if(bm!=null){
                     Cache.LAST_AD = areaId;
                     MainActivity.getInstance().updateImageView(bm);

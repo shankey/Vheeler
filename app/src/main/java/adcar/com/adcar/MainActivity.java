@@ -23,13 +23,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.Calendar;
 
+import adcar.com.cache.Cache;
 import adcar.com.database.dao.CoordinateDAO;
 import adcar.com.factory.Factory;
 import adcar.com.gps.AndroidGpsListener;
 import adcar.com.gps.GoogleApiClientListener;
+import adcar.com.handler.UncaughtExceptionHandler;
 import adcar.com.polling.ScheduleReceiver;
+import io.fabric.sdk.android.Fabric;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -61,30 +66,28 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this,
+                MainActivity.class));
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        //getSupportActionBar().hide();
+        Fabric.with(this, new Crashlytics());
 
-        ad_main = (ImageView)findViewById(R.id.ad_main);
-
-        mDetector = new GestureDetectorCompat(this,this);
-        // Set the gesture detector as the double tap
-        // listener.
-
-        mDetector.setOnDoubleTapListener(this);
-
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        androidGpsListener = new AndroidGpsListener(this ,locationManager, this.getBaseContext());
-        //Factory.getInstance().set(Factory.ANDROID_GPS_LISTENER, androidGpsListener);
-
-        setScheduler();
+        initializeUI();
+        initializeListeners();
+        initializeGestures();
 
         coordinateDAO = (CoordinateDAO) Factory.getInstance().get(Factory.DAO_COORDINATE);
 
-        //When the backbuttons show, hide them
+    }
+
+    public void initializeListeners(){
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        androidGpsListener = new AndroidGpsListener(this ,locationManager, this.getBaseContext());
+
+        setScheduler();
+
         View decorView = getWindow().getDecorView();
         decorView.setOnSystemUiVisibilityChangeListener
                 (new View.OnSystemUiVisibilityChangeListener() {
@@ -104,13 +107,28 @@ public class MainActivity extends AppCompatActivity implements
                 });
     }
 
+    public void initializeUI(){
+        ad_main = (ImageView)findViewById(R.id.ad_main);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        //getSupportActionBar().hide();
+    }
+
     public void updateImageView(final Bitmap bm) {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
-                Log.i("GPS", "updating on UI thread "+bm);
+                Log.i("GPS", "updating on UI thread " + bm);
                 ad_main.setImageBitmap(bm);
             }
         });
+    }
+
+    public void initializeGestures(){
+        mDetector = new GestureDetectorCompat(this,this);
+        // Set the gesture detector as the double tap
+        // listener.
+
+        mDetector.setOnDoubleTapListener(this);
     }
 
     @Override
@@ -119,6 +137,12 @@ public class MainActivity extends AppCompatActivity implements
         androidGpsListener.enableLocationUpdates();
         super.onStart();
 
+    }
+
+    @Override
+    protected void onResume(){
+        Cache.LAST_AD = null;
+        super.onResume();
     }
 
     @Override
@@ -152,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements
         HideToolbar runner = new HideToolbar();
         runner.execute();
         Log.i("GESTURE", "double tap");
+
 
         Intent intent = new Intent(this, SettingsActivity.class);
 
