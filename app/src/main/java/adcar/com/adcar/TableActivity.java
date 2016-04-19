@@ -38,7 +38,7 @@ public class TableActivity extends AppCompatActivity {
             ArrayList<CoordinatesEntity> cos = coordinateDAO.getCoordinates();
 
             for(CoordinatesEntity co: cos){
-                li.add(co.getTimestamp() + " - " + co.getCoordinate().getLatitude() + " - " + co.getCoordinate().getLongitude());
+                li.add(co.getAdId() + " - " + co.getAreaId() + " - " + co.getTimestamp() + " - " + co.getCoordinate().getLatitude() + " - " + co.getCoordinate().getLongitude());
             }
         }
 
@@ -50,7 +50,6 @@ public class TableActivity extends AppCompatActivity {
                 for(Coordinate co : area.getCoordinates()){
                     li.add(area.getAreaId() + " - " + co.getLatitude() + " - " + co.getLongitude());
                 }
-
             }
         }
 
@@ -62,7 +61,6 @@ public class TableActivity extends AppCompatActivity {
                 li.add(ad.getAreaId() + " - " + ad.getUrl());
             }
         }
-
 
 
         // CREATE THE ADAPTER USING THE CURSOR POINTING TO THE DESIRED DATA AS WELL AS THE LAYOUT INFORMATION

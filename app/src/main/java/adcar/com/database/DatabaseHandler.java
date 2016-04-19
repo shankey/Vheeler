@@ -3,6 +3,7 @@ package adcar.com.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import adcar.com.database.dao.AdDAO;
 import adcar.com.database.dao.AreaDAO;
@@ -13,13 +14,14 @@ import adcar.com.database.dao.CoordinateDAO;
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Database Name
     private static final String DATABASE_NAME = "vheeler";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+
     }
 
     @Override
@@ -31,8 +33,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.i("UPGRADE", "oldversion is" + oldVersion);
+        switch(oldVersion) {
 
+            case 1:
+                db.execSQL(CoordinateDAO.ALTER_COORDINATES_TABLE_AD_ID_1);
+                db.execSQL(CoordinateDAO.ALTER_COORDINATES_TABLE_AREA_ID_1);
+            case 2:
+
+            case 3:
+                break;
+            default:
+                throw new IllegalStateException(
+                        "onUpgrade() with unknown oldVersion " + oldVersion);
+        }
     }
 
 }

@@ -28,6 +28,7 @@ import adcar.com.coordinates.CoordinateAlgorithms;
 import adcar.com.database.dao.AreaDAO;
 import adcar.com.database.dao.CoordinateDAO;
 import adcar.com.factory.Factory;
+import adcar.com.gps.AndroidGpsListener;
 import adcar.com.gps.GoogleApiClientListener;
 import adcar.com.handler.AdHandler;
 import adcar.com.handler.AreaHandler;
@@ -51,7 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     GoogleApiClientListener googleApiClientListener = null;
     CoordinateDAO coordinateDAO = null;
-
+    public static SettingsActivity activity;
 
     //UI elements
     EditText area = null;
@@ -75,6 +76,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        activity = this;
+        AndroidGpsListener.setSettingsActivity(activity);
         Log.i("GPS", "OnCreate Called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
@@ -286,6 +289,10 @@ public class SettingsActivity extends AppCompatActivity {
         super.onWindowFocusChanged(hasFocus);
         changeVisibility();
 
+    }
+
+    public static SettingsActivity getSettingsActivityInstance(){
+        return activity;
     }
 
     private void changeVisibility(){

@@ -61,4 +61,9 @@ public class CoordinatesEntity {
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
+
+    @Override
+    public String toString(){
+        return adId + " "+areaId + " "+deviceId + " " + coordinate.toString();
+    }
 }

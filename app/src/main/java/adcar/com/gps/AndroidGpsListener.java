@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import adcar.com.adcar.MainActivity;
+import adcar.com.adcar.SettingsActivity;
 import adcar.com.cache.Cache;
 import adcar.com.coordinates.CoordinateAlgorithms;
 import adcar.com.database.dao.CoordinateDAO;
@@ -44,6 +45,7 @@ import adcar.com.utility.Utility;
 public class AndroidGpsListener implements LocationListener {
 
     private MainActivity activity;
+    private static SettingsActivity settingsActivity;
     LocationManager locationManager = null;
     Context context = null;
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
@@ -58,8 +60,14 @@ public class AndroidGpsListener implements LocationListener {
         this.activity = locationListener;
     }
 
+
+
     public LocationManager getLocationManager() {
         return locationManager;
+    }
+
+    public static void setSettingsActivity(SettingsActivity activity){
+        settingsActivity = activity;
     }
 
 
@@ -166,10 +174,18 @@ public class AndroidGpsListener implements LocationListener {
         }
     }
 
+    private void populateSettings(Location location){
+        if(settingsActivity != null){
+            settingsActivity.getLongitude().setText(""+ location.getLongitude());
+            settingsActivity.getLatitude().setText("" + location.getLatitude());
+        }
+    }
+
     private void makeUseOfNewLocation(Location location) {
         Calendar calendar = Calendar.getInstance();
         String time = sdf.format(calendar.getTime()).toString();
         Log.i("GPS", " CoordinatesEntity = " + location.getLatitude() + " - " + location.getLongitude());
+        populateSettings(location);
         MainActivity ui = (MainActivity)activity;
 //        ui.getLatitude().setText("" + location.getLatitude());
 //        ui.getLongitude().setText("" + location.getLongitude());

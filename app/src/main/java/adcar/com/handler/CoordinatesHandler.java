@@ -39,7 +39,7 @@ public class CoordinatesHandler extends Handler {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        //coordinateDAO.deleteCoordinate(li);
+                        coordinateDAO.deleteCoordinate(coordinateBatchEntity.getLi());
                         Log.i("RESPONSE", response.toString());
                     }
                 },

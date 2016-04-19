@@ -3,6 +3,7 @@ package adcar.com.handler;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Process;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -19,6 +20,7 @@ public class UncaughtExceptionHandler implements
 
     public void uncaughtException(Thread thread, Throwable exception) {
         Crashlytics.logException(exception);
+        Log.e("GPS", "ERROR", exception);
         try {
             Thread.sleep(5000, 0);
         } catch (InterruptedException e) {

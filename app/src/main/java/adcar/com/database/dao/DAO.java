@@ -17,6 +17,8 @@ public class DAO {
     public static final String KEY_AREA_ID = "areaId";
     public static final String KEY_AD_URL = "adlocation";
     public static final String KEY_STATUS = "status";
+    public static final String KEY_AD_ID = "adId";
+    public static final String DEVICE_ID = "deviceId";
 
     private Context context = null;
     DatabaseHandler dbHandler = null;
