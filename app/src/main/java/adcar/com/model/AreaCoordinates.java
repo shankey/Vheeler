@@ -1,8 +1,7 @@
-package adcar.com.coordinates;
+package adcar.com.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

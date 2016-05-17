@@ -26,11 +26,11 @@ public class UncaughtExceptionHandler implements
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Intent intent = new Intent(myContext, myActivityClass);
-        myContext.startActivity(intent);
-        //for restarting the Activity
-        Process.killProcess(Process.myPid());
-
-        System.exit(0);
+//        Intent intent = new Intent(myContext, myActivityClass);
+//        myContext.startActivity(intent);
+//        //for restarting the Activity
+//        Process.killProcess(Process.myPid());
+//
+//        System.exit(0);
     }
 }

@@ -20,10 +20,10 @@ import java.util.Map;
 
 import adcar.com.adcar.MainActivity;
 import adcar.com.cache.Cache;
-import adcar.com.coordinates.CoordinateAlgorithms;
+import adcar.com.algorithms.CoordinateAlgorithms;
 import adcar.com.database.dao.CoordinateDAO;
 import adcar.com.factory.Factory;
-import adcar.com.model.Coordinate;
+import adcar.com.model.servertalkers.Coordinate;
 import adcar.com.model.CoordinatesEntity;
 import adcar.com.network.CustomStringRequest;
 import adcar.com.network.NetworkManager;

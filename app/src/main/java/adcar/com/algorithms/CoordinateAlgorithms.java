@@ -1,4 +1,4 @@
-package adcar.com.coordinates;
+package adcar.com.algorithms;
 
 import android.location.Location;
 import android.util.Log;
@@ -12,9 +12,8 @@ import java.util.List;
 
 import adcar.com.adcar.MainActivity;
 import adcar.com.cache.Cache;
-import adcar.com.model.Area;
-import adcar.com.model.Areas;
-import adcar.com.model.Coordinate;
+import adcar.com.model.servertalkers.Area;
+import adcar.com.model.servertalkers.Coordinate;
 import adcar.com.utility.Strings;
 
 /**

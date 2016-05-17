@@ -12,9 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import adcar.com.model.Coordinate;
+import adcar.com.model.servertalkers.Coordinate;
 import adcar.com.model.CoordinatesEntity;
-import adcar.com.utility.Strings;
 
 /**
  * Created by aditya on 02/02/16.
@@ -25,8 +24,8 @@ public class CoordinateDAO extends DAO {
 
     public static String CREATE_COORDINATES_TABLE = "CREATE TABLE " + TABLE_COORDINATES + "("
             + KEY_ID + " INTEGER PRIMARY KEY," + KEY_LATITUDE + " REAL,"
-            + KEY_LONGITUDE + " REAL,"+ KEY_TIMESTAMP + " TIMESTAMP" +
-//             KEY_AD_ID+ " INTEGER," + KEY_AREA_ID+ " INTEGER" +
+            + KEY_LONGITUDE + " REAL," + KEY_TIMESTAMP + " TIMESTAMP," +
+            KEY_AD_ID+ " INTEGER," + KEY_AREA_ID+ " INTEGER" +
             ")";
 
     public static String ALTER_COORDINATES_TABLE_AD_ID_1 = "ALTER TABLE " + TABLE_COORDINATES

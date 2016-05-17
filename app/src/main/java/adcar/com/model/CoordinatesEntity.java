@@ -2,6 +2,8 @@ package adcar.com.model;
 
 import java.sql.Timestamp;
 
+import adcar.com.model.servertalkers.Coordinate;
+
 /**
  * Created by aditya on 25/01/16.
  */

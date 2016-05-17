@@ -1,26 +1,20 @@
 package adcar.com.handler;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import adcar.com.cache.Cache;
 import adcar.com.factory.Factory;
 import adcar.com.database.dao.AreaDAO;
-import adcar.com.model.Area;
-import adcar.com.model.Areas;
+import adcar.com.model.servertalkers.Area;
+import adcar.com.model.servertalkers.Areas;
 import adcar.com.network.CustomStringRequest;
-import adcar.com.network.NetworkManager;
 import adcar.com.network.UrlPaths;
-import adcar.com.utility.Strings;
-import adcar.com.utility.Utility;
 
 /**
  * Created by aditya on 07/02/16.

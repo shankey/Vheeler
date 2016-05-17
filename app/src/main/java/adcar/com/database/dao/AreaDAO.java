@@ -11,9 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import adcar.com.model.Area;
-import adcar.com.model.Areas;
-import adcar.com.model.Coordinate;
+import adcar.com.model.servertalkers.Area;
+import adcar.com.model.servertalkers.Coordinate;
 
 /**
  * Created by aditya on 02/02/16.

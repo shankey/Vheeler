@@ -1,43 +1,25 @@
 package adcar.com.gps;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import adcar.com.adcar.MainActivity;
 import adcar.com.adcar.SettingsActivity;
-import adcar.com.cache.Cache;
-import adcar.com.coordinates.CoordinateAlgorithms;
 import adcar.com.database.dao.CoordinateDAO;
 import adcar.com.factory.Factory;
-import adcar.com.model.Coordinate;
-import adcar.com.model.CoordinatesEntity;
-import adcar.com.network.CustomStringRequest;
-import adcar.com.network.NetworkManager;
-import adcar.com.network.UrlPaths;
-import adcar.com.utility.Utility;
+import adcar.com.handler.CoordinatesHandler;
 
 /**
  * Created by aditya on 04/04/16.
@@ -48,8 +30,9 @@ public class AndroidGpsListener implements LocationListener {
     private static SettingsActivity settingsActivity;
     LocationManager locationManager = null;
     Context context = null;
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+
     public static CoordinateDAO coordinateDAO = (CoordinateDAO) Factory.getInstance().get(Factory.DAO_COORDINATE);
+    public static CoordinatesHandler coordinatesHandler = new CoordinatesHandler();
     Gson gson = new GsonBuilder().create();
     public static Long lastUpdated = null;
 
@@ -82,7 +65,7 @@ public class AndroidGpsListener implements LocationListener {
         }
 
         if(lastUpdated==null || ((location.getTime() - lastUpdated)/1000 > 15)) {
-            makeUseOfNewLocation(getLocation());
+            coordinatesHandler.makeUseOfNewLocation(getLocation());
             lastUpdated = location.getTime();
         }
     }
@@ -137,6 +120,13 @@ public class AndroidGpsListener implements LocationListener {
 
     }
 
+    private void populateSettings(Location location){
+        if(settingsActivity != null){
+            settingsActivity.getLongitude().setText(""+ location.getLongitude());
+            settingsActivity.getLatitude().setText("" + location.getLatitude());
+        }
+    }
+
     public Location getLocation() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -174,96 +164,6 @@ public class AndroidGpsListener implements LocationListener {
         }
     }
 
-    private void populateSettings(Location location){
-        if(settingsActivity != null){
-            settingsActivity.getLongitude().setText(""+ location.getLongitude());
-            settingsActivity.getLatitude().setText("" + location.getLatitude());
-        }
-    }
-
-    private void makeUseOfNewLocation(Location location) {
-        Calendar calendar = Calendar.getInstance();
-        String time = sdf.format(calendar.getTime()).toString();
-        Log.i("GPS", " CoordinatesEntity = " + location.getLatitude() + " - " + location.getLongitude());
-        populateSettings(location);
-        MainActivity ui = (MainActivity)activity;
-//        ui.getLatitude().setText("" + location.getLatitude());
-//        ui.getLongitude().setText("" + location.getLongitude());
-//        ui.getTime().setText(time);
-//        ui.getArea().setText(String.valueOf(CoordinateAlgorithms.getInsideAreaId(location)));
-        Log.i("GPS", "Calling UI ended");
-
-        Integer areaId = CoordinateAlgorithms.getInsideAreaId(location);
-
-        CoordinatesEntity coordinatesEntity = new CoordinatesEntity();
-        Coordinate coordinate = new Coordinate(location.getLatitude(), location.getLongitude());
-        coordinatesEntity.setCoordinate(coordinate);
-        coordinatesEntity.setTimestamp(new Timestamp(calendar.getTime().getTime()));
-        coordinatesEntity.setAreaId(areaId);
-        coordinatesEntity.setAdId(areaId);
-        coordinatesEntity.setDeviceId(Cache.deviceId);
-
-
-        Log.i("GPS", "Calling sendCoordinateToSErver now");
-        sendCoordinatesToServer(coordinatesEntity);
-
-
-        if(Cache.LAST_AD==null || Cache.LAST_AD!=areaId){
-            Bitmap bm = null;
-            try{
-                bm = Utility.getFromInternalStorage(areaId);
-                Log.i("GPS", "trying to update with " + areaId + " " + bm);
-                Toast.makeText(activity, "Showing Ad = "+areaId , Toast.LENGTH_LONG).show();
-                if(bm!=null){
-                    Cache.LAST_AD = areaId;
-                    MainActivity.getInstance().updateImageView(bm);
-                }
-
-
-            }catch (Exception e){
-                Log.i("VHEELER", "Could Not Retrieve Ad" + e.getStackTrace());
-            }
-        }
-
-    }
-
-    private void saveCoordinatesToDatabase(CoordinatesEntity coordinatesEntity){
-        if(coordinateDAO == null) {
-            Log.i("RESPONSE", "NULL hai coordinateDAO");
-            if (Factory.getInstance().get(Factory.DAO_COORDINATE) == null) {
-                Log.i("RESPONSE", "NULL hai Factory coordinateDAO");
-            } else{
-                Log.i("RESPONSE", "NULL nahi hai Factory coordinateDAO");
-            }
-        }else{
-            Log.i("RESPONSE", "NULL nahi hai coordinateDAO" + coordinateDAO);
-        }
-        coordinateDAO.addCoordinate(coordinatesEntity);
-    }
-
-    private void sendCoordinatesToServer(final CoordinatesEntity coordinatesEntity){
-        Log.i("GPS", "inside first line sendCoordinatesToServer");
-        Map<String, String> map = new HashMap<>();
-        map.put("json", gson.toJson(coordinatesEntity));
-        CustomStringRequest request = new CustomStringRequest(Request.Method.POST, null, map, UrlPaths.POST_COORDINATES,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.i("RESPONSE", response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.i("RESPONSE", "inside first line onErrorResponse");
-                        saveCoordinatesToDatabase(coordinatesEntity);
-                        Log.i("RESPONSE", error.toString());
-                    }
-                }
-        );
-        NetworkManager nm = (NetworkManager) Factory.getInstance().get(Factory.NETWORK_MANAGER);
-        nm.addToRequestQueue(request);
-    }
 
 
 }

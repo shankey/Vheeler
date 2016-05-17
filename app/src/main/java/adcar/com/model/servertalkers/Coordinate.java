@@ -1,4 +1,4 @@
-package adcar.com.model;
+package adcar.com.model.servertalkers;
 
 /**
  * Created by aditya on 02/02/16.

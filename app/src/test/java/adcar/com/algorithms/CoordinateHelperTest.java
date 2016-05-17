@@ -1,4 +1,4 @@
-package adcar.com.coordinates;
+package adcar.com.algorithms;
 
 
 

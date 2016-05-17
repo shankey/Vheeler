@@ -1,6 +1,7 @@
 package adcar.com.network;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -17,7 +18,7 @@ import adcar.com.utility.Utility;
 /**
  * Created by aditya on 09/02/16.
  */
-public class ImageDownload {
+public class ImageDownloader {
 
     final AdDAO adDAO = (AdDAO) Factory.getInstance().get(Factory.DAO_AD);
     NetworkManager nw = (NetworkManager) Factory.getInstance().get(Factory.NETWORK_MANAGER);
@@ -28,14 +29,10 @@ public class ImageDownload {
                     @Override
                     public void onResponse(Bitmap bitmap) {
                         try {
-                            Utility.saveToInternalStorage(bitmap, ad.getAreaId());
-                            Ad ad = new Ad();
-                            ad.setStatus(1);
-                            adDAO.addAd(ad);
+                            Utility.saveToInternalStorage(bitmap, ad.getAdId());
+                            adDAO.updateAdStatus(ad);
                         } catch (IOException e) {
-                            Ad ad = new Ad();
-                            ad.setStatus(0);
-                            adDAO.addAd(ad);
+                            Log.e("ADSYNC", "error downloading", e);
                         }
                     }
                 }, 0, 0, null,

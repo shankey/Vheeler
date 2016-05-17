@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, ScheduleReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10 * 1000, pendingIntent);
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 60 * 1000, pendingIntent);
         Toast.makeText(this, "Set Scheduler last line", Toast.LENGTH_LONG).show();
     }
 

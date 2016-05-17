@@ -1,9 +1,6 @@
 package adcar.com.adcar;
 
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -21,26 +18,24 @@ import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.Calendar;
-
 import adcar.com.cache.Cache;
-import adcar.com.coordinates.CoordinateAlgorithms;
+import adcar.com.algorithms.CoordinateAlgorithms;
 import adcar.com.database.dao.AreaDAO;
 import adcar.com.database.dao.CoordinateDAO;
 import adcar.com.factory.Factory;
 import adcar.com.gps.AndroidGpsListener;
 import adcar.com.gps.GoogleApiClientListener;
-import adcar.com.handler.AdHandler;
+import adcar.com.handler.CampaignHandler;
 import adcar.com.handler.AreaHandler;
 import adcar.com.handler.CoordinatesHandler;
 import adcar.com.handler.VersionHandler;
 import adcar.com.model.Ad;
-import adcar.com.model.Area;
-import adcar.com.model.Areas;
-import adcar.com.model.Coordinate;
-import adcar.com.model.CoordinateBatchEntity;
+import adcar.com.model.servertalkers.Area;
+import adcar.com.model.servertalkers.Areas;
+import adcar.com.model.servertalkers.Coordinate;
+import adcar.com.model.servertalkers.CoordinateBatchEntity;
 import adcar.com.network.CustomStringRequest;
-import adcar.com.network.ImageDownload;
+import adcar.com.network.ImageDownloader;
 import adcar.com.network.NetworkManager;
 import adcar.com.network.UrlPaths;
 import adcar.com.utility.Strings;
@@ -215,12 +210,12 @@ public class SettingsActivity extends AppCompatActivity {
         get_image_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AdHandler adHandler = new AdHandler();
+                CampaignHandler adHandler = new CampaignHandler();
                 Ad ad = new Ad();
-                ad.setAreaId(1);
-                ad.setStatus(0);
+                ad.setAdId(1);
+
                 ad.setUrl("http://developer.chrome.com/extensions/examples/api/idle/idle_simple/sample-128.png");
-                new ImageDownload().downloadImage(ad);
+                new ImageDownloader().downloadImage(ad);
             }
         });
 

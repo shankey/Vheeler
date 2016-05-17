@@ -1,6 +1,5 @@
-package adcar.com.model;
+package adcar.com.model.servertalkers;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 
 /**

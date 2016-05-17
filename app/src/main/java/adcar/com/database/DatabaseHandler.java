@@ -7,6 +7,8 @@ import android.util.Log;
 
 import adcar.com.database.dao.AdDAO;
 import adcar.com.database.dao.AreaDAO;
+import adcar.com.database.dao.CampaignInfoDAO;
+import adcar.com.database.dao.CampaignRunDAO;
 import adcar.com.database.dao.CoordinateDAO;
 
 /**
@@ -18,9 +20,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Database Name
     private static final String DATABASE_NAME = "vheeler";
+    private static final String BETA_DATABASE_NAME = "/sdcard/vheeler.db";
 
     public DatabaseHandler(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, BETA_DATABASE_NAME, null, DATABASE_VERSION);
+        Log.i("DATABASE", "path = "+context.getExternalFilesDir(null).getAbsolutePath() + "/" +DATABASE_NAME);
 
     }
 
@@ -30,6 +34,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CoordinateDAO.CREATE_COORDINATES_TABLE);
         db.execSQL(AreaDAO.CREATE_AREAS_TABLE);
         db.execSQL(AdDAO.CREATE_ADS_TABLE);
+        db.execSQL(CampaignInfoDAO.CREATE_CAMPAIGN_INFO_TABLE);
+        db.execSQL(CampaignRunDAO.CREATE_TABLE_CAMPAIGN_RUN);
     }
 
     @Override

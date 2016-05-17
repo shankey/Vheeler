@@ -6,6 +6,8 @@ import android.location.LocationManager;
 
 import adcar.com.database.dao.AdDAO;
 import adcar.com.database.dao.AreaDAO;
+import adcar.com.database.dao.CampaignInfoDAO;
+import adcar.com.database.dao.CampaignRunDAO;
 import adcar.com.database.dao.CoordinateDAO;
 import adcar.com.gps.AndroidGpsListener;
 import adcar.com.network.NetworkManager;
@@ -20,6 +22,8 @@ public class Factory {
     public static CoordinateDAO coordinateDAO = null;
     public static AreaDAO areaDAO = null;
     public static AdDAO adDAO = null;
+    public static CampaignInfoDAO campaignInfoDAO = null;
+    public static CampaignRunDAO campaignRunDAO = null;
     public static NetworkManager networkManager = null;
     public static SharedPreferences sharedPreferences = null;
     public static AndroidGpsListener androidGpsListener = null;
@@ -34,6 +38,8 @@ public class Factory {
     public static Integer SHARED_PREFERENCES=4;
     public static Integer DAO_AD = 5;
     public static Integer ANDROID_GPS_LISTENER = 6;
+    public static Integer DAO_CAMPAIGN_INFO = 7;
+    public static Integer DAO_CAMPAIGN_RUN = 8;
 
 
     private Factory(){
@@ -45,6 +51,8 @@ public class Factory {
             coordinateDAO = new CoordinateDAO(context);
             areaDAO = new AreaDAO(context);
             adDAO = new AdDAO(context);
+            campaignInfoDAO = new CampaignInfoDAO(context);
+            campaignRunDAO = new CampaignRunDAO(context);
             networkManager = NetworkManager.getInstance(context);
             sharedPreferences = context.getSharedPreferences(SHARED_PREFFERENCES_FILE, 0);
         }
@@ -88,6 +96,14 @@ public class Factory {
 
         if(i == ANDROID_GPS_LISTENER){
             return androidGpsListener;
+        }
+
+        if(i == DAO_CAMPAIGN_INFO){
+            return campaignInfoDAO;
+        }
+
+        if(i == DAO_CAMPAIGN_RUN){
+            return campaignRunDAO;
         }
 
         return null;

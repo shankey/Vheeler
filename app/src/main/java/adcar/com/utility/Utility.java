@@ -52,13 +52,13 @@ public class Utility {
         return sp.getString(key, null);
     }
 
-    public static String saveToInternalStorage(Bitmap bitmapImage, Integer areaId) throws IOException {
+    public static String saveToInternalStorage(Bitmap bitmapImage, Integer adId) throws IOException {
 
         ContextWrapper cw = new ContextWrapper((Context)Factory.getInstance().get(Factory.BASE_CONTEXT));
         // path to /data/data/yourapp/app_data/imageDir
         File directory = cw.getDir("ad_images", Context.MODE_WORLD_READABLE);
         // Create imageDir
-        File adPath=new File(directory,areaId+".jpg");
+        File adPath=new File(directory,adId+".jpg");
         Log.i("ADSSYNC", "file save path = " + adPath.getAbsolutePath());
 
         FileOutputStream fos = null;

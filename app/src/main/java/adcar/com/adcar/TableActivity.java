@@ -8,14 +8,13 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import adcar.com.database.dao.AdDAO;
 import adcar.com.database.dao.AreaDAO;
 import adcar.com.database.dao.CoordinateDAO;
 import adcar.com.model.Ad;
-import adcar.com.model.Area;
-import adcar.com.model.Coordinate;
+import adcar.com.model.servertalkers.Area;
+import adcar.com.model.servertalkers.Coordinate;
 import adcar.com.model.CoordinatesEntity;
 
 
@@ -55,10 +54,10 @@ public class TableActivity extends AppCompatActivity {
 
         if(intent.getIntExtra("ACTION", -1) == 2){
             adDAO = new AdDAO(this);
-            Map<Integer, Ad> ads = adDAO.getAds();
+            List<Ad> ads = adDAO.getAds(null, null);
 
-            for(Ad ad: ads.values()){
-                li.add(ad.getAreaId() + " - " + ad.getUrl());
+            for(Ad ad: ads){
+                li.add(ad.getAdId() + " - " + ad.getUrl());
             }
         }
 

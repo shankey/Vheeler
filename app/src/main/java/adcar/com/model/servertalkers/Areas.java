@@ -1,6 +1,8 @@
-package adcar.com.model;
+package adcar.com.model.servertalkers;
 
 import java.util.List;
+
+import adcar.com.model.servertalkers.Area;
 
 /**
  * Created by aditya on 06/02/16.

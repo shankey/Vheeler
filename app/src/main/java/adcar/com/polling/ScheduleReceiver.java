@@ -3,6 +3,7 @@ package adcar.com.polling;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -12,9 +13,12 @@ import java.util.List;
 
 import adcar.com.factory.Factory;
 import adcar.com.database.dao.CoordinateDAO;
+import adcar.com.handler.AdHandler;
+import adcar.com.handler.CampaignHandler;
+import adcar.com.handler.CampaignRunHandler;
 import adcar.com.handler.CoordinatesHandler;
 import adcar.com.handler.VersionHandler;
-import adcar.com.model.CoordinateBatchEntity;
+import adcar.com.model.servertalkers.CoordinateBatchEntity;
 import adcar.com.model.CoordinatesEntity;
 import adcar.com.utility.Utility;
 
@@ -29,7 +33,8 @@ public class ScheduleReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context, "Alarm Chalu" ,Toast.LENGTH_LONG);
+        Toast.makeText(context, "Alarm Chalu" ,Toast.LENGTH_LONG).show();
+        Log.i("POLLER", "called now with timer = " + timeKeeper);
 
         //run every 15 minutes
         if(timeKeeper%15==0){
@@ -60,7 +65,9 @@ public class ScheduleReceiver extends BroadcastReceiver {
 
         //run every 60 minutes
         if(timeKeeper%60==0){
+            new AdHandler().SyncAds();
             new VersionHandler().SyncVersions();
+            CampaignRunHandler.StartSyncCampaignRuns();
         }
 
 

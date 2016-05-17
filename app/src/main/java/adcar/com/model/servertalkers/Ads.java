@@ -1,23 +1,17 @@
-package adcar.com.model;
+package adcar.com.model.servertalkers;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import adcar.com.model.Ad;
 
 /**
  * Created by aditya on 09/02/16.
  */
 public class Ads {
 
-    String version;
     List<Ad> ads = new ArrayList<>();
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
 
     public List<Ad> getAds() {
         return ads;
@@ -29,6 +23,6 @@ public class Ads {
 
     @Override
     public String toString(){
-        return "version = " + version + " ads = " + ads;
+        return " ads = " + ads;
     }
 }

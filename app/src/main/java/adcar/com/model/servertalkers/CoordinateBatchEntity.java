@@ -1,6 +1,8 @@
-package adcar.com.model;
+package adcar.com.model.servertalkers;
 
 import java.util.List;
+
+import adcar.com.model.CoordinatesEntity;
 
 /**
  * Created by aditya on 10/03/16.

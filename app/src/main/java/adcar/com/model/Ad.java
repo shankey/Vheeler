@@ -1,12 +1,15 @@
 package adcar.com.model;
 
+
+
+
 /**
  * Created by aditya on 09/02/16.
  */
-public class Ad {
+public class Ad implements Comparable<Ad> {
 
     private Integer id;
-    private Integer areaId;
+    private Integer adId;
     private String url;
     private Integer status;
 
@@ -18,22 +21,6 @@ public class Ad {
         this.id = id;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public Integer getAreaId() {
-        return areaId;
-    }
-
-    public void setAreaId(Integer areaId) {
-        this.areaId = areaId;
-    }
-
     public Integer getStatus() {
         return status;
     }
@@ -42,8 +29,29 @@ public class Ad {
         this.status = status;
     }
 
-    @Override
+    public Integer getAdId() {
+        return adId;
+    }
+
+    public void setAdId(Integer adId) {
+        this.adId = adId;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public String toString(){
-        return "Id = " + id + "AreaId = "+ areaId + "URL = " + url + "status = " + status;
+        return id + " " + adId + " " + url;
+
+    }
+
+    @Override
+    public int compareTo(Ad ad) {
+        return ad.getAdId();
     }
 }

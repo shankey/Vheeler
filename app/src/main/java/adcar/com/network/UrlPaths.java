@@ -11,6 +11,7 @@ public class UrlPaths {
     public static final String POST_COORDINATES = BASE_URL + "/coordinate";
     public static final String POST_COORDINATES_BATCH = BASE_URL + "/coordinate_batch";
     public static final String GET_VERSIONS = BASE_URL + "/versions";
-    public static final String GET_ADS = BASE_URL + "/ads";
+    public static final String GET_ALL_CAMPAIGNS = BASE_URL + "/get_all_campaigns";
+    public static final String GET_CAMPAIGN_SCHEDULE = BASE_URL + "/get_campaign_schedule";
 
 }

@@ -29,8 +29,6 @@ public class CustomStringRequest extends StringRequest {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
-
-
     public CustomStringRequest(int method, String url, Response.Listener<String> listener,
                                Response.ErrorListener errorListener) {
         super(method, url, listener, errorListener);

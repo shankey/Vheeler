@@ -2,16 +2,11 @@ package adcar.com.cache;
 
 import android.content.Context;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import adcar.com.database.dao.AdDAO;
 import adcar.com.database.dao.AreaDAO;
 import adcar.com.model.Ad;
-import adcar.com.model.Area;
-import adcar.com.model.Areas;
+import adcar.com.model.servertalkers.Areas;
 import adcar.com.utility.Utility;
 
 /**
@@ -36,9 +31,7 @@ public class Cache {
         return areas;
     }
 
-    public Map<Integer, Ad> getAds(){
-        return adMap;
-    }
+
 
     public static  Cache getCache(){
         return cache;
@@ -48,8 +41,6 @@ public class Cache {
         AreaDAO areaDAO = new AreaDAO(context);
         areas = new Areas();
         areas.setAreas(areaDAO.getAreas());
-        AdDAO adDAO = new AdDAO(context);
-        adMap = adDAO.getAds();
     }
 
     public static void setCache(Cache cache) {

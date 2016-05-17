@@ -10,8 +10,8 @@ import com.android.volley.VolleyError;
 
 
 import adcar.com.factory.Factory;
-import adcar.com.model.Versions;
-import adcar.com.model.VersionsList;
+import adcar.com.model.servertalkers.Versions;
+import adcar.com.model.servertalkers.VersionsList;
 import adcar.com.network.CustomStringRequest;
 import adcar.com.network.UrlPaths;
 import adcar.com.utility.Strings;
@@ -23,6 +23,9 @@ import adcar.com.utility.Utility;
 public class VersionHandler extends Handler {
 
     public void SyncVersions() {
+
+        new CampaignHandler().SyncCampaigns();
+
         CustomStringRequest csr = new CustomStringRequest(Request.Method.GET, UrlPaths.GET_VERSIONS,
                 new Response.Listener<String>() {
                     @Override
@@ -47,20 +50,20 @@ public class VersionHandler extends Handler {
                                 }
                             }
 
-                            if (ver.getName().equals(Strings.ADS)) {
-                                if (existingAdVersion == null || existingAdVersion.isEmpty() ||
-                                        (Integer.parseInt(existingAdVersion) < ver.getVersion())) {
-                                    Log.i("VERSION", "inside ads");
-                                    new AdHandler().SyncAds();
-                                    Utility.saveToSharedPreference(Strings.VERSION_AD, "" + ver.getVersion());
-                                    Log.i("VERSION", "ads save "+ver.getVersion());
-                                    Toast.makeText((Context) Factory.getInstance().get(Factory.BASE_CONTEXT),
-                                            "NEW ADS COMING", Toast.LENGTH_SHORT).show();
-                                }else{
-                                    Toast.makeText((Context) Factory.getInstance().get(Factory.BASE_CONTEXT),
-                                            "Old Ad Retain", Toast.LENGTH_SHORT).show();
-                                }
-                            }
+//                            if (ver.getName().equals(Strings.ADS)) {
+//                                if (existingAdVersion == null || existingAdVersion.isEmpty() ||
+//                                        (Integer.parseInt(existingAdVersion) < ver.getVersion())) {
+//                                    Log.i("VERSION", "inside ads");
+//                                    new CampaignHandler().SyncAds();
+//                                    //Utility.saveToSharedPreference(Strings.VERSION_AD, "" + ver.getVersion());
+//                                    Log.i("VERSION", "ads save "+ver.getVersion());
+//                                    Toast.makeText((Context) Factory.getInstance().get(Factory.BASE_CONTEXT),
+//                                            "NEW ADS COMING", Toast.LENGTH_SHORT).show();
+//                                }else{
+//                                    Toast.makeText((Context) Factory.getInstance().get(Factory.BASE_CONTEXT),
+//                                            "Old Ad Retain", Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
 
                         }
 
