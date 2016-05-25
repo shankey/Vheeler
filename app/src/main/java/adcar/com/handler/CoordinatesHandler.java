@@ -19,11 +19,15 @@ import adcar.com.adcar.MainActivity;
 import adcar.com.algorithms.AdAlgorithms;
 import adcar.com.cache.Cache;
 import adcar.com.algorithms.CoordinateAlgorithms;
+import adcar.com.database.dao.CampaignRunDAO;
 import adcar.com.factory.Factory;
 import adcar.com.database.dao.CoordinateDAO;
+import adcar.com.model.CampaignInfo;
+import adcar.com.model.CampaignRun;
 import adcar.com.model.CoordinatesEntity;
 import adcar.com.model.servertalkers.Coordinate;
 import adcar.com.model.servertalkers.CoordinateBatchEntity;
+import adcar.com.model.servertalkers.ExhaustedCampaign;
 import adcar.com.network.CustomStringRequest;
 import adcar.com.network.NetworkManager;
 import adcar.com.network.UrlPaths;
@@ -35,6 +39,7 @@ import adcar.com.utility.Utility;
 public class CoordinatesHandler extends Handler {
 
     public static CoordinateDAO coordinateDAO = (CoordinateDAO)Factory.getInstance().get(Factory.DAO_COORDINATE);
+    public static CampaignRunDAO campaignRunDAO = (CampaignRunDAO)Factory.getInstance().get(Factory.DAO_CAMPAIGN_RUN);
 
     public void sendCoordinatesToServer(final CoordinateBatchEntity coordinateBatchEntity){
 
@@ -75,6 +80,13 @@ public class CoordinatesHandler extends Handler {
         coordinateDAO.addCoordinate(coordinatesEntity);
     }
 
+    private void addCampaignRunToCache(Integer campaignInfoId, String time){
+        ExhaustedCampaign cr = new ExhaustedCampaign();
+        cr.setCampaignInfoId(campaignInfoId);
+        cr.setDate(time);
+        Cache.getCache().getCampaignRunSet().add(cr);
+    }
+
     public void sendCoordinatesToServer(final CoordinatesEntity coordinatesEntity){
         Log.i("GPS", "inside first line sendCoordinatesToServer");
         Map<String, String> map = new HashMap<>();
@@ -104,33 +116,48 @@ public class CoordinatesHandler extends Handler {
         String time = sdf.format(calendar.getTime()).toString();
         Log.i("GPS", " CoordinatesEntity = " + location.getLatitude() + " - " + location.getLongitude());
 
-
         Integer areaId = CoordinateAlgorithms.getInsideAreaId(location);
-        Integer adId = AdAlgorithms.getAdIdToDisplay(areaId);
+        CampaignInfo campaignInfo = AdAlgorithms.getAdIdToDisplay(areaId, time);
+        Integer adId = null;
+        Integer campaignInfoId = null;
+        if(campaignInfo == null){
+            adId = -1;
+            campaignInfoId = 7;
+        }else{
+            adId = campaignInfo.getAdId();
+            campaignInfoId=campaignInfo.getCampaignInfoId();
+        }
 
         CoordinatesEntity coordinatesEntity = new CoordinatesEntity();
         Coordinate coordinate = new Coordinate(location.getLatitude(), location.getLongitude());
         coordinatesEntity.setCoordinate(coordinate);
         coordinatesEntity.setTimestamp(new Timestamp(calendar.getTime().getTime()));
         coordinatesEntity.setAreaId(areaId);
-        coordinatesEntity.setAdId(areaId);
+        coordinatesEntity.setAdId(adId);
         coordinatesEntity.setDeviceId(Cache.deviceId);
-
+        coordinatesEntity.setCampaignInfoId(campaignInfoId);
 
         Log.i("GPS", "Calling sendCoordinateToSErver now");
         sendCoordinatesToServer(coordinatesEntity);
 
+        addCampaignRunToCache(campaignInfoId, time);
 
-        if(Cache.LAST_AD==null || Cache.LAST_AD!=adId){
+        CampaignRun crExahusted = campaignRunDAO.getCampaignRunsFromInfoIdAndDate(campaignInfoId, time);
+        if(crExahusted !=null){
+            Log.i("GPS", "coordinate ad change = " + crExahusted.toString());
+        }
+
+        if(adId==-1 || Cache.LAST_AREA==null || Cache.LAST_AREA!=areaId || (crExahusted!=null && crExahusted.getActive()==0)){
             Bitmap bm = null;
             try{
                 bm = Utility.getFromInternalStorage(adId);
-                Log.i("GPS", "trying to update with " + adId + " " + bm);
-                Toast.makeText(MainActivity.getInstance(), "Showing Ad = "+adId , Toast.LENGTH_LONG).show();
                 if(bm!=null){
                     Cache.LAST_AD = adId;
+                    Cache.LAST_AREA = areaId;
                     MainActivity.getInstance().updateImageView(bm);
                 }
+                Log.i("GPS", "trying to update with " + Cache.LAST_AD + " " + bm);
+                Toast.makeText(MainActivity.getInstance(), "Showing AdId = "+adId + " AreaId = " + areaId , Toast.LENGTH_LONG).show();
 
             }catch (Exception e){
                 Log.i("VHEELER", "Could Not Retrieve Ad" + e.getStackTrace());

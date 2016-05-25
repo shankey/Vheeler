@@ -15,6 +15,15 @@ public class CoordinatesEntity {
     Integer adId;
     Integer areaId;
     String deviceId;
+    Integer campaignInfoId;
+
+    public Integer getCampaignInfoId() {
+        return campaignInfoId;
+    }
+
+    public void setCampaignInfoId(Integer campaignInfoId) {
+        this.campaignInfoId = campaignInfoId;
+    }
 
     public Integer getId() {
         return id;

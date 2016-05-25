@@ -7,17 +7,27 @@ import java.util.List;
  */
 public class AreaAd {
 
+    private Integer campaignInfoId;
     private Integer areaId;
     private Integer adId;
     private Integer version;
-    private List<Schedule> schedule;
+    private Integer active;
 
-    public List<Schedule> getSchedule() {
-        return schedule;
+
+    public Integer getCampaignInfoId() {
+        return campaignInfoId;
     }
 
-    public void setSchedule(List<Schedule> schedule) {
-        this.schedule = schedule;
+    public void setCampaignInfoId(Integer campaignInfoId) {
+        this.campaignInfoId = campaignInfoId;
+    }
+
+    public Integer getActive() {
+        return active;
+    }
+
+    public void setActive(Integer active) {
+        this.active = active;
     }
 
     public Integer getAreaId() {

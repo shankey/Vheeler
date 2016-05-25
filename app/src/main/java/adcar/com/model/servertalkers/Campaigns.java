@@ -2,13 +2,15 @@ package adcar.com.model.servertalkers;
 
 import java.util.List;
 
+import adcar.com.model.CampaignInfo;
+
 /**
  * Created by adinema on 06/05/16.
  */
 public class Campaigns {
 
     private Integer campaignId;
-    private List<AreaAd> areaAds;
+    private List<CampaignInfo> campaignInfos;
 
     public Integer getCampaignId() {
         return campaignId;
@@ -18,15 +20,15 @@ public class Campaigns {
         this.campaignId = campaignId;
     }
 
-    public List<AreaAd> getAreaAds() {
-        return areaAds;
+    public List<CampaignInfo> getCampaignInfos() {
+        return campaignInfos;
     }
 
-    public void setAreaAds(List<AreaAd> areaAds) {
-        this.areaAds = areaAds;
+    public void setCampaignInfos(List<CampaignInfo> campaignInfos) {
+        this.campaignInfos = campaignInfos;
     }
 
     public String toString(){
-        return campaignId + " " + areaAds.toString();
+        return campaignId + " " + campaignInfos.toString();
     }
 }

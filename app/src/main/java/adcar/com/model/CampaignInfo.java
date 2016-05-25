@@ -7,10 +7,28 @@ public class CampaignInfo implements Comparable<CampaignInfo> {
 
     private Integer id;
     private Integer campaignId;
+    private Integer campaignInfoId;
     private Integer adId;
     private Integer areaId;
     private Integer version;
     private Integer status;
+    private Integer active;
+
+    public Integer getCampaignInfoId() {
+        return campaignInfoId;
+    }
+
+    public void setCampaignInfoId(Integer campaignInfoId) {
+        this.campaignInfoId = campaignInfoId;
+    }
+
+    public Integer getActive() {
+        return active;
+    }
+
+    public void setActive(Integer active) {
+        this.active = active;
+    }
 
     public Integer getId() {
         return id;
@@ -61,7 +79,7 @@ public class CampaignInfo implements Comparable<CampaignInfo> {
     }
 
     public String toString(){
-        return campaignId + " " + adId + " " + areaId + " " + status;
+        return campaignId + " " + campaignInfoId + " " + status;
     }
 
     @Override

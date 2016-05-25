@@ -2,11 +2,14 @@ package adcar.com.cache;
 
 import android.content.Context;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import adcar.com.database.dao.AreaDAO;
 import adcar.com.model.Ad;
 import adcar.com.model.servertalkers.Areas;
+import adcar.com.model.servertalkers.ExhaustedCampaign;
 import adcar.com.utility.Utility;
 
 /**
@@ -22,7 +25,11 @@ public class Cache {
 
     public static Integer LAST_AD = null;
 
+    public static Integer LAST_AREA = null;
+
     public static String deviceId = Utility.getDeviceId();
+
+    public Set<ExhaustedCampaign> campaignRunSet = new HashSet<ExhaustedCampaign>();
 
     private Cache(){
     }
@@ -53,5 +60,13 @@ public class Cache {
 
     public void setAdMap(Map<Integer, Ad> adMap) {
         this.adMap = adMap;
+    }
+
+    public Set<ExhaustedCampaign> getCampaignRunSet() {
+        return campaignRunSet;
+    }
+
+    public void setCampaignRunSet(Set<ExhaustedCampaign> campaignRunSet) {
+        this.campaignRunSet = campaignRunSet;
     }
 }

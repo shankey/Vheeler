@@ -2,6 +2,7 @@ package adcar.com.database.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
@@ -30,8 +31,14 @@ public class CampaignRunDAO extends DAO {
                 + KEY_ACTIVE + " INTEGER" +
                 ")";
 
+        public void addCampaignRun(CampaignRun campaignRun){
+            List<CampaignRun> campaignRuns = new ArrayList<CampaignRun>();
+            campaignRuns.add(campaignRun);
+            addCampaignRuns(campaignRuns);
+        }
 
-    public void addCampaignRuns(List< CampaignRun > campaignRuns){
+
+        public void addCampaignRuns(List<CampaignRun> campaignRuns){
         SQLiteDatabase db = dbHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -42,7 +49,7 @@ public class CampaignRunDAO extends DAO {
 
             values.put(KEY_CAMPAIGN_INFO_ID, campaign.getCampaignInfoId());
             values.put(KEY_DATE, campaign.getDate().toString());
-            values.put(KEY_ACTIVE, campaign.getActive());
+            values.put(KEY_ACTIVE, 1);
 
 // Insert the new row, returning the primary key value of the new row
             long newRowId;
@@ -64,10 +71,10 @@ public class CampaignRunDAO extends DAO {
         super.delete(idList, TABLE_CAMPAIGN_RUN);
     }
 
-    public void deleteCampaignRunsForCampaignInfo(Integer campaignId, Integer areaId, Integer adId){
+    public void deleteCampaignRunsForCampaignInfo(Integer campaignInfoId){
         SQLiteDatabase db = dbHandler.getWritableDatabase();
-        Log.i("SYNCHANDLER", "Delelting campaign run = " + campaignId + "-" + areaId + "-"+adId);
-        db.execSQL(String.format("DELETE FROM "+ TABLE_CAMPAIGN_RUN +" WHERE "+KEY_CAMPAIGN_INFO_ID+ " in (select id from " + CampaignInfoDAO.TABLE_CAMPAIGN_INFO + " where " + KEY_CAMPAIGN_ID + "=%s and "+KEY_AREA_ID + "=%s and " + KEY_AD_ID + "=%s);", campaignId, areaId, adId));
+        Log.i("SYNCHANDLER", "Delelting campaign run = " + campaignInfoId);
+        db.execSQL(String.format("DELETE FROM "+ TABLE_CAMPAIGN_RUN +" WHERE "+KEY_CAMPAIGN_INFO_ID+ " in (select id from " + CampaignInfoDAO.TABLE_CAMPAIGN_INFO + " where " + KEY_CAMPAIGN_INFO_ID + "=%s);", campaignInfoId));
         db.close();
     }
 
@@ -98,7 +105,7 @@ public class CampaignRunDAO extends DAO {
                 CampaignRun campaignRun = new CampaignRun();
                 campaignRun.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
                 campaignRun.setCampaignInfoId(cursor.getInt(cursor.getColumnIndex(KEY_CAMPAIGN_INFO_ID)));
-                campaignRun.setDate(Date.valueOf(cursor.getString(cursor.getColumnIndex(KEY_DATE))));
+                campaignRun.setDate((cursor.getString(cursor.getColumnIndex(KEY_DATE))));
                 campaignRun.setActive(cursor.getInt(cursor.getColumnIndex(KEY_ACTIVE)));
                 campaignRuns.add(campaignRun);
             }while(cursor.moveToNext());
@@ -106,5 +113,26 @@ public class CampaignRunDAO extends DAO {
         db.close();
         return  campaignRuns;
 
+    }
+
+    public void updateCampaignRuns(Integer campaignInfoId, String date, Integer active){
+        SQLiteDatabase db = dbHandler.getWritableDatabase();
+        Log.i("DATABASE", "Updating campaign run for status = " + campaignInfoId + " " + date);
+        db.execSQL(String.format("UPDATE "+ TABLE_CAMPAIGN_RUN +" set active=%s "+" WHERE ("+KEY_CAMPAIGN_INFO_ID+ "=%s " + " and " + KEY_DATE + "='%s');", active, campaignInfoId, date));
+        Log.i("EXHAUSTEDRUN", String.format("UPDATE "+ TABLE_CAMPAIGN_RUN +" set active=%s "+" WHERE ("+KEY_CAMPAIGN_INFO_ID+ "=%s " + " and " + KEY_DATE + "=%s);", active, campaignInfoId, date));
+        db.close();
+    }
+
+    public CampaignRun getCampaignRunsFromInfoIdAndDate(Integer campaignInfoId, String date){
+
+        String sql = KEY_CAMPAIGN_INFO_ID + "=? and "+KEY_DATE + "=?";
+        String[] params = new String[] {campaignInfoId.toString(), date};
+
+        List<CampaignRun> list = getCampaignRuns(sql, params);
+        if(list == null || list.size()==0){
+            return null;
+        }else{
+            return list.get(0);
+        }
     }
 }

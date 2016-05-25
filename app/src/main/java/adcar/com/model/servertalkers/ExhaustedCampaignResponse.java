@@ -1,27 +1,12 @@
-package adcar.com.model;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+package adcar.com.model.servertalkers;
 
 /**
- * Created by adinema on 06/05/16.
+ * Created by adinema on 23/05/16.
  */
-public class CampaignRun {
-
-
-    private Integer id;
-    private Integer campaignInfoId;
-    private String date;
-    private Integer active;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+public class ExhaustedCampaignResponse {
+    Integer campaignInfoId;
+    String date;
+    Integer active;
 
     public Integer getCampaignInfoId() {
         return campaignInfoId;
@@ -48,6 +33,6 @@ public class CampaignRun {
     }
 
     public String toString(){
-        return campaignInfoId + " - " + date + " - " + active;
+        return campaignInfoId + " - " + active + " - " + date;
     }
 }

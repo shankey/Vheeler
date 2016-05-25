@@ -17,6 +17,7 @@ import adcar.com.handler.AdHandler;
 import adcar.com.handler.CampaignHandler;
 import adcar.com.handler.CampaignRunHandler;
 import adcar.com.handler.CoordinatesHandler;
+import adcar.com.handler.ExhaustedCampaignRunHandler;
 import adcar.com.handler.VersionHandler;
 import adcar.com.model.servertalkers.CoordinateBatchEntity;
 import adcar.com.model.CoordinatesEntity;
@@ -65,6 +66,7 @@ public class ScheduleReceiver extends BroadcastReceiver {
 
         //run every 60 minutes
         if(timeKeeper%60==0){
+            new ExhaustedCampaignRunHandler().SyncExhaustedCampaignRuns();
             new AdHandler().SyncAds();
             new VersionHandler().SyncVersions();
             CampaignRunHandler.StartSyncCampaignRuns();

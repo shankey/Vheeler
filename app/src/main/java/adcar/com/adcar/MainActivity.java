@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void initializeUI(){
         ad_main = (ImageView)findViewById(R.id.ad_main);
+        ad_main.setKeepScreenOn(true);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         //getSupportActionBar().hide();

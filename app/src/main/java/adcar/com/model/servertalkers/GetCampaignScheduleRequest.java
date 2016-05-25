@@ -7,13 +7,13 @@ import java.util.List;
  */
 public class GetCampaignScheduleRequest {
 
-    private List<CampaignAreaAd> campaigns;
+    private List<CampaignInfoIdentifier> campaignInfoIds;
 
-    public List<CampaignAreaAd> getCampaigns() {
-        return campaigns;
+    public List<CampaignInfoIdentifier> getCampaignInfoIds() {
+        return campaignInfoIds;
     }
 
-    public void setCampaigns(List<CampaignAreaAd> campaigns) {
-        this.campaigns = campaigns;
+    public void setCampaignInfoIds(List<CampaignInfoIdentifier> campaignInfoIds) {
+        this.campaignInfoIds = campaignInfoIds;
     }
 }

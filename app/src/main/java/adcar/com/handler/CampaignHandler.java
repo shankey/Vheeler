@@ -18,7 +18,8 @@ import adcar.com.model.servertalkers.Ads;
 import adcar.com.model.servertalkers.AreaAd;
 import adcar.com.model.CampaignInfo;
 import adcar.com.model.servertalkers.Campaigns;
-import adcar.com.model.servertalkers.GetCampaigns;
+import adcar.com.model.servertalkers.CampaignSchedule;
+import adcar.com.model.servertalkers.GetActiveCampaignResponse;
 import adcar.com.network.CustomStringRequest;
 import adcar.com.network.UrlPaths;
 
@@ -38,34 +39,40 @@ public class CampaignHandler extends Handler {
                     @Override
                     public void onResponse(String response) {
 
-                        GetCampaigns allCampaigns = gson.fromJson(response.toString(), GetCampaigns.class);
+                        GetActiveCampaignResponse activeCampaigns = gson.fromJson(response.toString(), GetActiveCampaignResponse.class);
                         Ads ads = gson.fromJson(response.toString(), Ads.class);
                         Log.i("ADSSYNC", "Raw Response = " + response.toString());
-                        Log.i("ADSSYNC", "Response = " + allCampaigns.toString());
+                        Log.i("ADSSYNC", "Response = " + activeCampaigns.toString());
                         Log.i("ADSSYNC", "Response = " + ads.toString());
 
                         List<CampaignInfo> campaignList = new ArrayList<CampaignInfo>();
-                        for(Campaigns camps: allCampaigns.getCampaigns()){
+                        for(Campaigns camps: activeCampaigns.getCampaigns()){
                             Integer campaignId = camps.getCampaignId();
 
-                            for(AreaAd areaAd: camps.getAreaAds()){
+                            for(CampaignInfo campaignInfo: camps.getCampaignInfos()){
 
-                                CampaignInfo dbCampaign = campaignInfoDAO.getCampaign(campaignId.toString(), areaAd.getAdId().toString(), areaAd.getAreaId().toString());
-                                if(dbCampaign==null || dbCampaign.getVersion() < areaAd.getVersion()){
+                                CampaignInfo dbCampaign = campaignInfoDAO.getCampaign(campaignInfo.getCampaignInfoId().toString());
+                                if(dbCampaign==null || dbCampaign.getVersion() < campaignInfo.getVersion()){
                                     CampaignInfo campaign = new CampaignInfo();
                                     campaign.setCampaignId(campaignId);
-                                    campaign.setAdId(areaAd.getAdId());
-                                    campaign.setAreaId(areaAd.getAreaId());
-                                    campaign.setVersion(areaAd.getVersion());
-                                    campaign.setStatus(0);
+                                    campaign.setCampaignInfoId(campaignInfo.getCampaignInfoId());
+                                    campaign.setAdId(campaignInfo.getAdId());
+                                    campaign.setAreaId(campaignInfo.getAreaId());
+                                    campaign.setVersion(campaignInfo.getVersion());
+                                    if(campaignInfo.getActive()==1){
+                                        campaign.setStatus(0);
+                                    }else{
+                                        // TODO : update campain runs to active state 0 - no API calling
+                                    }
+                                    campaign.setActive(campaignInfo.getActive());
                                     campaignList.add(campaign);
                                 }else{
                                     Log.i("ADSSYNC", "Skipping ADSSYNC");
                                 }
                             }
                         }
-                        Log.i("DATABASE", campaignList.toString());
-                        campaignInfoDAO.addCampaigns(campaignList);
+                        Log.i("ADSSYNC", "campaign list to save or update = " + campaignList.toString());
+                        campaignInfoDAO.saveOrUpdate(campaignList);
 
 
                         for(Ad ad: ads.getAds()){
@@ -80,7 +87,7 @@ public class CampaignHandler extends Handler {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Log.e("CAMPAIGNSYNC", "Error while syncing campaigns", error);
                     }
                 });
 

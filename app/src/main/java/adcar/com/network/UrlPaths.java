@@ -13,5 +13,6 @@ public class UrlPaths {
     public static final String GET_VERSIONS = BASE_URL + "/versions";
     public static final String GET_ALL_CAMPAIGNS = BASE_URL + "/get_all_campaigns";
     public static final String GET_CAMPAIGN_SCHEDULE = BASE_URL + "/get_campaign_schedule";
+    public static final String GET_EXHAUSTED_CAMPAIGN_RUNS = BASE_URL + "/get_exhausted_campaign_runs";
 
 }
