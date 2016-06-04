@@ -25,7 +25,7 @@ public class CoordinateDAO extends DAO {
     public static String CREATE_COORDINATES_TABLE = "CREATE TABLE " + TABLE_COORDINATES + "("
             + KEY_ID + " INTEGER PRIMARY KEY," + KEY_LATITUDE + " REAL,"
             + KEY_LONGITUDE + " REAL," + KEY_TIMESTAMP + " TIMESTAMP," +
-            KEY_AD_ID+ " INTEGER," + KEY_AREA_ID+ " INTEGER" +
+            KEY_AD_ID+ " INTEGER," + KEY_AREA_ID+ " INTEGER," + KEY_CAMPAIGN_INFO_ID+ " INTEGER" +
             ")";
 
     public static String ALTER_COORDINATES_TABLE_AD_ID_1 = "ALTER TABLE " + TABLE_COORDINATES
@@ -49,7 +49,7 @@ public class CoordinateDAO extends DAO {
 
         String args = TextUtils.join(", ", idList);
         db.execSQL(String.format("DELETE FROM "+ TABLE_COORDINATES +" WHERE id IN (%s);", args));
-        db.close();
+        //db.close();
     }
 
     public void addCoordinate(CoordinatesEntity coordinatesEntity){
@@ -65,12 +65,13 @@ public class CoordinateDAO extends DAO {
         values.put(KEY_TIMESTAMP, new Date().getTime());
         values.put(KEY_AD_ID, coordinatesEntity.getAdId());
         values.put(KEY_AREA_ID, coordinatesEntity.getAreaId());
+        values.put(KEY_CAMPAIGN_INFO_ID, coordinatesEntity.getCampaignInfoId());
 
 
 // Insert the new row, returning the primary key value of the new row
         long newRowId;
         newRowId = db.insert(TABLE_COORDINATES, null , values);
-        db.close();
+        //db.close();
 
         Log.i("DATABASE", "row inserted = " + newRowId);
     }
@@ -78,7 +79,7 @@ public class CoordinateDAO extends DAO {
     public ArrayList<CoordinatesEntity> getCoordinates(){
         SQLiteDatabase db = dbHandler.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_COORDINATES, new String[]{KEY_ID, KEY_LATITUDE, KEY_LONGITUDE, KEY_TIMESTAMP, KEY_AD_ID, KEY_AREA_ID}
+        Cursor cursor = db.query(TABLE_COORDINATES, new String[]{KEY_ID, KEY_LATITUDE, KEY_LONGITUDE, KEY_TIMESTAMP, KEY_AD_ID, KEY_AREA_ID, KEY_CAMPAIGN_INFO_ID}
                 ,null, null, null, null, KEY_TIMESTAMP+ " DESC", "700");
         Log.i("DB QUERY", cursor.getColumnNames().toString());
 
@@ -86,12 +87,12 @@ public class CoordinateDAO extends DAO {
 
         if(cursor.moveToFirst()){
             do{
-                Log.i("DB QUERY", cursor.getString(cursor.getColumnIndex(KEY_ID)));
-                Log.i("DB QUERY", cursor.getString(cursor.getColumnIndex(KEY_LATITUDE)));
-                Log.i("DB QUERY", cursor.getString(cursor.getColumnIndex(KEY_LONGITUDE)));
-                Log.i("DB QUERY", cursor.getString(cursor.getColumnIndex(KEY_TIMESTAMP)));
-                Log.i("DB QUERY", cursor.getString(cursor.getColumnIndex(KEY_AD_ID)));
-                Log.i("DB QUERY", cursor.getString(cursor.getColumnIndex(KEY_AREA_ID)));
+                Log.i("DB QUERY", "" + cursor.getString(cursor.getColumnIndex(KEY_ID)));
+                Log.i("DB QUERY", "" + cursor.getString(cursor.getColumnIndex(KEY_LATITUDE)));
+                Log.i("DB QUERY", "" + cursor.getString(cursor.getColumnIndex(KEY_LONGITUDE)));
+                Log.i("DB QUERY", "" + cursor.getString(cursor.getColumnIndex(KEY_TIMESTAMP)));
+                Log.i("DB QUERY", "" + cursor.getString(cursor.getColumnIndex(KEY_AD_ID)));
+                Log.i("DB QUERY", "" + cursor.getString(cursor.getColumnIndex(KEY_AREA_ID)));
 
                 CoordinatesEntity coordinate = new CoordinatesEntity();
                 coordinate.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
@@ -100,10 +101,13 @@ public class CoordinateDAO extends DAO {
                 coordinate.setCoordinate(co);
                 coordinate.setAdId(cursor.getInt(cursor.getColumnIndex(KEY_AD_ID)));
                 coordinate.setAreaId(cursor.getInt(cursor.getColumnIndex(KEY_AREA_ID)));
+                coordinate.setCampaignInfoId(cursor.getInt(cursor.getColumnIndex(KEY_CAMPAIGN_INFO_ID)));
                 coordinates.add(coordinate);
             }while(cursor.moveToNext());
         }
-        db.close();
+
+        cursor.close();
+        //db.close();
         return  coordinates;
     }
 

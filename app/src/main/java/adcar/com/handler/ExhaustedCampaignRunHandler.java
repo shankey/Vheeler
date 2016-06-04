@@ -55,7 +55,7 @@ public class ExhaustedCampaignRunHandler extends Handler {
 
                         //transform incoming data to database savable format
                         for(ExhaustedCampaignResponse exhaustedCampaignResponse: allExhaustedCampaigns.getExhaustedCampaignList()){
-                            Log.i("EXHAUSTEDRUN", "Interator = " + exhaustedCampaignResponse.toString());
+                            Log.i("EXHAUSTEDRUN", "Interator = " + allExhaustedCampaigns.toString());
                             campaignRunDAO.updateCampaignRuns(exhaustedCampaignResponse.getCampaignInfoId(), exhaustedCampaignResponse.getDate(), exhaustedCampaignResponse.getActive());
                         }
                         Cache.getCache().getCampaignRunSet().removeAll(lastRunCampaigns);

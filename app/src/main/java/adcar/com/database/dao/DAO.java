@@ -31,11 +31,11 @@ public class DAO {
 
 
     private Context context = null;
-    DatabaseHandler dbHandler = null;
+    public static DatabaseHandler dbHandler = null;
 
     public DAO(Context context){
         this.context = context;
-        this.dbHandler = new DatabaseHandler(this.context);
+        this.dbHandler = DatabaseHandler.getDbHandler(context);
     }
 
     public void delete(List<String> idList, String table){

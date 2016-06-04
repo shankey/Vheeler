@@ -10,6 +10,9 @@ import android.location.LocationManager;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -34,13 +37,13 @@ import adcar.com.gps.AndroidGpsListener;
 import adcar.com.gps.GoogleApiClientListener;
 import adcar.com.handler.UncaughtExceptionHandler;
 import adcar.com.polling.ScheduleReceiver;
+import adcar.com.utility.Strings;
 import io.fabric.sdk.android.Fabric;
 
 
 public class MainActivity extends AppCompatActivity implements
         GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener
-        {
+        GestureDetector.OnDoubleTapListener {
 
 
     GoogleApiClientListener googleApiClientListener = null;
@@ -54,18 +57,17 @@ public class MainActivity extends AppCompatActivity implements
     //UI elements
     ImageView ad_main = null;
 
-    public MainActivity(){
-        ma = this;
-    }
+    public static Handler mHandler = null;
 
-    public static MainActivity getInstance(){
-        return ma;
+    public static Handler getHandler(){
+        return mHandler;
     }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         setContentView(R.layout.activity_main);
 
@@ -78,13 +80,34 @@ public class MainActivity extends AppCompatActivity implements
         initializeListeners();
         initializeGestures();
 
+        mHandler = new Handler(Looper.getMainLooper()){
+
+            @Override
+            public void handleMessage(Message msg) {
+                Log.i("UIHANDLER", String.format("inside UI Handler with what %s msg %s", msg.what, msg.obj));
+                super.handleMessage(msg);
+                Integer action = msg.what;
+                switch (action){
+                    case 1: //TOAST
+                        String toastMessage = (String)msg.obj;
+                        Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
+                        break;
+                    case 2: //IMAGE_UPDATE
+                        Bitmap bitmap = (Bitmap) msg.obj;
+                        ad_main.setImageBitmap(bitmap);
+                        break;
+                }
+
+            }
+        };
+
         coordinateDAO = (CoordinateDAO) Factory.getInstance().get(Factory.DAO_COORDINATE);
 
     }
 
-    public void initializeListeners(){
+    public void initializeListeners() {
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        androidGpsListener = new AndroidGpsListener(this ,locationManager, this.getBaseContext());
+        androidGpsListener = new AndroidGpsListener(this, locationManager, this.getBaseContext());
 
         setScheduler();
 
@@ -107,8 +130,8 @@ public class MainActivity extends AppCompatActivity implements
                 });
     }
 
-    public void initializeUI(){
-        ad_main = (ImageView)findViewById(R.id.ad_main);
+    public void initializeUI() {
+        ad_main = (ImageView) findViewById(R.id.ad_main);
         ad_main.setKeepScreenOn(true);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -124,8 +147,8 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
-    public void initializeGestures(){
-        mDetector = new GestureDetectorCompat(this,this);
+    public void initializeGestures() {
+        mDetector = new GestureDetectorCompat(this, this);
         // Set the gesture detector as the double tap
         // listener.
 
@@ -141,8 +164,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         Cache.LAST_AD = null;
+        Cache.LAST_CAMPAIGN_INFO_ID = null;
+        Cache.LAST_AREA = null;
         super.onResume();
     }
 
@@ -154,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         this.mDetector.onTouchEvent(event);
         // Be sure to call the superclass implementation
         return super.onTouchEvent(event);
@@ -221,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                Thread.sleep(2500,0);
+                Thread.sleep(2500, 0);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -237,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    public void setScheduler(){
+    public void setScheduler() {
         Log.i("SCHEDULER", "setting scheduler");
         Calendar cal = Calendar.getInstance();
         Intent intent = new Intent(this, ScheduleReceiver.class);

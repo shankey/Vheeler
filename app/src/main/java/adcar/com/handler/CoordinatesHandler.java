@@ -2,6 +2,7 @@ package adcar.com.handler;
 
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ import adcar.com.model.servertalkers.ExhaustedCampaign;
 import adcar.com.network.CustomStringRequest;
 import adcar.com.network.NetworkManager;
 import adcar.com.network.UrlPaths;
+import adcar.com.utility.Strings;
 import adcar.com.utility.Utility;
 
 /**
@@ -50,15 +52,15 @@ public class CoordinatesHandler extends Handler {
                     @Override
                     public void onResponse(String response) {
                         coordinateDAO.deleteCoordinate(coordinateBatchEntity.getLi());
-                        Log.i("RESPONSE", response.toString());
+                        Log.i("GPSPROCESSOR", response.toString());
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.i("RESPONSE", "inside first line onErrorResponse");
+                        Log.i("GPSPROCESSOR", "inside first line onErrorResponse");
                         //saveCoordinatesToDatabase(coordinatesEntity);
-                        Log.i("RESPONSE", error.toString());
+                        Log.i("GPSPROCESSOR", error.toString());
                     }
                 }
         );
@@ -67,16 +69,6 @@ public class CoordinatesHandler extends Handler {
     }
 
     private void saveCoordinatesToDatabase(CoordinatesEntity coordinatesEntity){
-        if(coordinateDAO == null) {
-            Log.i("RESPONSE", "NULL hai coordinateDAO");
-            if (Factory.getInstance().get(Factory.DAO_COORDINATE) == null) {
-                Log.i("RESPONSE", "NULL hai Factory coordinateDAO");
-            } else{
-                Log.i("RESPONSE", "NULL nahi hai Factory coordinateDAO");
-            }
-        }else{
-            Log.i("RESPONSE", "NULL nahi hai coordinateDAO" + coordinateDAO);
-        }
         coordinateDAO.addCoordinate(coordinatesEntity);
     }
 
@@ -88,22 +80,22 @@ public class CoordinatesHandler extends Handler {
     }
 
     public void sendCoordinatesToServer(final CoordinatesEntity coordinatesEntity){
-        Log.i("GPS", "inside first line sendCoordinatesToServer");
+        Log.i("GPSPROCESSOR", "inside first line sendCoordinatesToServer");
         Map<String, String> map = new HashMap<>();
         map.put("json", gson.toJson(coordinatesEntity));
         CustomStringRequest request = new CustomStringRequest(Request.Method.POST, null, map, UrlPaths.POST_COORDINATES,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.i("RESPONSE", response.toString());
+                        Log.i("GPSPROCESSOR", response.toString());
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.i("RESPONSE", "inside first line onErrorResponse");
+                        Log.i("GPSPROCESSOR", "inside first line onErrorResponse");
                         saveCoordinatesToDatabase(coordinatesEntity);
-                        Log.i("RESPONSE", error.toString());
+                        Log.i("GPSPROCESSOR", error.toString());
                     }
                 }
         );
@@ -113,55 +105,67 @@ public class CoordinatesHandler extends Handler {
 
     public void makeUseOfNewLocation(Location location) {
         Calendar calendar = Calendar.getInstance();
-        String time = sdf.format(calendar.getTime()).toString();
-        Log.i("GPS", " CoordinatesEntity = " + location.getLatitude() + " - " + location.getLongitude());
+        Timestamp tTime = new Timestamp(calendar.getTime().getTime());
+        String time = sdf.format(tTime).toString();
+
+        Log.i("GPSPROCESSOR", " insdie makeUseOfNewLocation " + location.getLatitude() + " - " + location.getLongitude());
 
         Integer areaId = CoordinateAlgorithms.getInsideAreaId(location);
         CampaignInfo campaignInfo = AdAlgorithms.getAdIdToDisplay(areaId, time);
         Integer adId = null;
         Integer campaignInfoId = null;
         if(campaignInfo == null){
-            adId = -1;
-            campaignInfoId = 7;
+            adId = 7;
+            campaignInfoId = 68;
         }else{
             adId = campaignInfo.getAdId();
             campaignInfoId=campaignInfo.getCampaignInfoId();
         }
 
-        CoordinatesEntity coordinatesEntity = new CoordinatesEntity();
-        Coordinate coordinate = new Coordinate(location.getLatitude(), location.getLongitude());
-        coordinatesEntity.setCoordinate(coordinate);
-        coordinatesEntity.setTimestamp(new Timestamp(calendar.getTime().getTime()));
-        coordinatesEntity.setAreaId(areaId);
-        coordinatesEntity.setAdId(adId);
-        coordinatesEntity.setDeviceId(Cache.deviceId);
-        coordinatesEntity.setCampaignInfoId(campaignInfoId);
-
-        Log.i("GPS", "Calling sendCoordinateToSErver now");
-        sendCoordinatesToServer(coordinatesEntity);
-
-        addCampaignRunToCache(campaignInfoId, time);
-
-        CampaignRun crExahusted = campaignRunDAO.getCampaignRunsFromInfoIdAndDate(campaignInfoId, time);
+        CampaignRun crExahusted = campaignRunDAO.getCampaignRunsFromInfoIdAndDate(Cache.LAST_CAMPAIGN_INFO_ID, time);
         if(crExahusted !=null){
-            Log.i("GPS", "coordinate ad change = " + crExahusted.toString());
+            Log.i("GPSPROCESSOR", "coordinate ad change = " + crExahusted.toString());
         }
 
-        if(adId==-1 || Cache.LAST_AREA==null || Cache.LAST_AREA!=areaId || (crExahusted!=null && crExahusted.getActive()==0)){
-            Bitmap bm = null;
+        Log.i("GPSPROCESSOR", String.format("trying to change display ad with adId=%s areaId=%s campaignInfoId=%s ", adId, areaId, campaignInfoId));
+        Log.i("GPSPROCESSOR", String.format("previous ad was adId=%s areaId=%s campaignInfoId=%s ", Cache.LAST_AD, Cache.LAST_AREA, Cache.LAST_CAMPAIGN_INFO_ID));
+
+        Bitmap bm = null;
+        if((adId==7 || Cache.LAST_AREA==null || Cache.LAST_AREA!=areaId || Cache.LAST_CAMPAIGN_INFO_ID==null || Cache.LAST_CAMPAIGN_INFO_ID!=campaignInfoId) || (crExahusted==null || crExahusted.getActive()==0)){
+
             try{
                 bm = Utility.getFromInternalStorage(adId);
+
                 if(bm!=null){
                     Cache.LAST_AD = adId;
                     Cache.LAST_AREA = areaId;
-                    MainActivity.getInstance().updateImageView(bm);
+                    Cache.LAST_CAMPAIGN_INFO_ID = campaignInfoId;
+                    Utility.sendMessageToHandler(MainActivity.getHandler(), Strings.IMAGE_UPDATE, bm);
+                }else{
+                    Log.i("GPSPROCESSOR", "Ad Image is null = " + bm);
                 }
-                Log.i("GPS", "trying to update with " + Cache.LAST_AD + " " + bm);
-                Toast.makeText(MainActivity.getInstance(), "Showing AdId = "+adId + " AreaId = " + areaId , Toast.LENGTH_LONG).show();
+
+                String obj = "Showing AdId = "+adId + " AreaId = " + areaId + "campaignInfoId = " + campaignInfoId;
+                Utility.sendMessageToHandler(MainActivity.getHandler(), Strings.TOAST, obj);
 
             }catch (Exception e){
-                Log.i("VHEELER", "Could Not Retrieve Ad" + e.getStackTrace());
+                Log.e("GPSPROCESSOR", "Could Not Retrieve Ad" + e.getStackTrace());
             }
+        }
+
+        if(!(bm==null || Cache.LAST_AD==null || Cache.LAST_AREA==null || Cache.LAST_CAMPAIGN_INFO_ID==null)){
+            CoordinatesEntity coordinatesEntity = new CoordinatesEntity();
+            Coordinate coordinate = new Coordinate(location.getLatitude(), location.getLongitude());
+            coordinatesEntity.setCoordinate(coordinate);
+            coordinatesEntity.setTimestamp(tTime);
+            coordinatesEntity.setAreaId(Cache.LAST_AREA);
+            coordinatesEntity.setAdId(Cache.LAST_AD);
+            coordinatesEntity.setDeviceId(Cache.deviceId);
+            coordinatesEntity.setCampaignInfoId(Cache.LAST_CAMPAIGN_INFO_ID);
+
+            Log.i("GPSPROCESSOR", "Calling sendCoordinateToSErver now with = " + coordinatesEntity.toString());
+            sendCoordinatesToServer(coordinatesEntity);
+            addCampaignRunToCache(Cache.LAST_CAMPAIGN_INFO_ID, time);
         }
     }
 }

@@ -12,4 +12,8 @@ public class Strings {
     public static String AREA = "AREA";
     public static String ADS = "ADS";
     public static String MAIN_ACTIVITY = "ADS";
+    public static String TIMER = "TIMER";
+
+    public static int TOAST = 1;
+    public static int IMAGE_UPDATE =2;
 }

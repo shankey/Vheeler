@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 
+import adcar.com.adcar.MainActivity;
 import adcar.com.factory.Factory;
 import adcar.com.model.servertalkers.Versions;
 import adcar.com.model.servertalkers.VersionsList;
@@ -42,11 +43,10 @@ public class VersionHandler extends Handler {
                                     Log.i("VERSION", "inside area");
                                     new AreaHandler().SyncAreas();
                                     Utility.saveToSharedPreference(Strings.VERSION_AREA, "" + ver.getVersion());
-                                    Toast.makeText((Context) Factory.getInstance().get(Factory.BASE_CONTEXT),
-                                            "NEW AREAS", Toast.LENGTH_SHORT).show();
+                                    Utility.sendMessageToHandler(MainActivity.getHandler(), Strings.TOAST, "NEW AREAS");
+
                                 }else{
-                                    Toast.makeText((Context) Factory.getInstance().get(Factory.BASE_CONTEXT),
-                                            "Old Area Retain", Toast.LENGTH_SHORT).show();
+                                    Utility.sendMessageToHandler(MainActivity.getHandler(), Strings.TOAST, "Old Area Retain");
                                 }
                             }
 

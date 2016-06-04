@@ -57,7 +57,7 @@ public class CampaignRunDAO extends DAO {
             Log.i("DATABASE", "row inserted = " + newRowId);
         }
 
-        db.close();
+        //db.close();
 
     }
 
@@ -74,8 +74,8 @@ public class CampaignRunDAO extends DAO {
     public void deleteCampaignRunsForCampaignInfo(Integer campaignInfoId){
         SQLiteDatabase db = dbHandler.getWritableDatabase();
         Log.i("SYNCHANDLER", "Delelting campaign run = " + campaignInfoId);
-        db.execSQL(String.format("DELETE FROM "+ TABLE_CAMPAIGN_RUN +" WHERE "+KEY_CAMPAIGN_INFO_ID+ " in (select id from " + CampaignInfoDAO.TABLE_CAMPAIGN_INFO + " where " + KEY_CAMPAIGN_INFO_ID + "=%s);", campaignInfoId));
-        db.close();
+        db.execSQL(String.format("DELETE FROM "+ TABLE_CAMPAIGN_RUN +" WHERE "+KEY_CAMPAIGN_INFO_ID+ " in (select " + KEY_CAMPAIGN_INFO_ID +" from " + CampaignInfoDAO.TABLE_CAMPAIGN_INFO + " where " + KEY_CAMPAIGN_INFO_ID + "=%s);", campaignInfoId));
+        //db.close();
     }
 
     public List<CampaignRun> getCampaignRunsFromInfoId(Integer campaignInfoId){
@@ -110,7 +110,9 @@ public class CampaignRunDAO extends DAO {
                 campaignRuns.add(campaignRun);
             }while(cursor.moveToNext());
         }
-        db.close();
+
+        cursor.close();
+        //db.close();
         return  campaignRuns;
 
     }
@@ -120,10 +122,22 @@ public class CampaignRunDAO extends DAO {
         Log.i("DATABASE", "Updating campaign run for status = " + campaignInfoId + " " + date);
         db.execSQL(String.format("UPDATE "+ TABLE_CAMPAIGN_RUN +" set active=%s "+" WHERE ("+KEY_CAMPAIGN_INFO_ID+ "=%s " + " and " + KEY_DATE + "='%s');", active, campaignInfoId, date));
         Log.i("EXHAUSTEDRUN", String.format("UPDATE "+ TABLE_CAMPAIGN_RUN +" set active=%s "+" WHERE ("+KEY_CAMPAIGN_INFO_ID+ "=%s " + " and " + KEY_DATE + "=%s);", active, campaignInfoId, date));
-        db.close();
+        //db.close();
+    }
+
+    public void updateActiveCampaignRuns(Integer campaignInfoId, Integer active){
+        SQLiteDatabase db = dbHandler.getWritableDatabase();
+        Log.i("DATABASE", "Updating campaign run for status = " + campaignInfoId);
+        db.execSQL(String.format("UPDATE "+ TABLE_CAMPAIGN_RUN +" set active=%s "+" WHERE ("+KEY_CAMPAIGN_INFO_ID+ "=%s );", active, campaignInfoId));
+
+        //db.close();
     }
 
     public CampaignRun getCampaignRunsFromInfoIdAndDate(Integer campaignInfoId, String date){
+
+        if(campaignInfoId==null || date == null){
+            return  null;
+        }
 
         String sql = KEY_CAMPAIGN_INFO_ID + "=? and "+KEY_DATE + "=?";
         String[] params = new String[] {campaignInfoId.toString(), date};
@@ -134,5 +148,18 @@ public class CampaignRunDAO extends DAO {
         }else{
             return list.get(0);
         }
+    }
+
+    public void deleteByCampaignId(List<String> idList){
+        SQLiteDatabase db = dbHandler.getWritableDatabase();
+        String args = TextUtils.join(", ", idList);
+        db.execSQL(String.format("DELETE FROM "+ TABLE_CAMPAIGN_RUN +" WHERE campaign_info_id IN (select campaign_info_id from campaign_info where campaign_id IN (%s));", args));
+        //db.close();
+    }
+
+    public void deleteByCampaignId(String campaignInfoId){
+        List<String> list = new ArrayList<String>();
+        list.add(campaignInfoId);
+        deleteByCampaignId(list);
     }
 }

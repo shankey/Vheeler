@@ -44,7 +44,7 @@ public class AdDAO extends DAO {
             Log.i("DATABASE", "row inserted ad= " + newRowId);
 
 
-        db.close();
+        //db.close();
     }
 
 
@@ -66,7 +66,7 @@ public class AdDAO extends DAO {
             Log.i("DATABASE", "row inserted area= " + newRowId);
 
         }
-        db.close();
+        //db.close();
     }
 
     public void updateAdStatus(Ad ad){
@@ -74,7 +74,8 @@ public class AdDAO extends DAO {
         Log.i("ADSYNC", "update ad status in db " + ad.getId());
         String sql = String.format("update " + TABLE_ADS + " set status=1 where %s=%s", KEY_ID, ad.getId());
         db.execSQL(sql);
-        db.close();
+
+        //db.close();
     }
 
     public void deleteAd(){
@@ -85,7 +86,7 @@ public class AdDAO extends DAO {
         }catch (Exception e){
             Log.i("ERROR", e.toString());
         } finally {
-            db.close();
+            //db.close();
         }
 
     }
@@ -135,6 +136,8 @@ public class AdDAO extends DAO {
         }
 
         Log.i("DATABASE", "ads return = " + adList.toString());
+        cursor.close();
+        //db.close();
         return adList;
 
     }

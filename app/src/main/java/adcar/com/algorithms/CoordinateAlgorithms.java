@@ -15,6 +15,7 @@ import adcar.com.cache.Cache;
 import adcar.com.model.servertalkers.Area;
 import adcar.com.model.servertalkers.Coordinate;
 import adcar.com.utility.Strings;
+import adcar.com.utility.Utility;
 
 /**
  * Created by aditya on 08/02/16.
@@ -30,8 +31,9 @@ public class CoordinateAlgorithms {
     public static Integer getInsideAreaId(Coordinate currentCoordinate){
         List<Area> areas = Cache.getCache().getAreas().getAreas();
         if(areas == null || areas.isEmpty()){
-            Toast.makeText(MainActivity.getInstance(), "Areas yet to be synced", Toast.LENGTH_SHORT).show();
+            Utility.sendMessageToHandler(MainActivity.getHandler(), Strings.TOAST, "Areas yet to be synced");
         }
+
         Log.i("AREA", areas.toString());
         LatLng currentLatLng = new LatLng(currentCoordinate.getLatitude(),currentCoordinate.getLongitude());
 

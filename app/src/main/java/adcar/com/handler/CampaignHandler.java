@@ -6,11 +6,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import adcar.com.database.dao.AdDAO;
 import adcar.com.database.dao.CampaignInfoDAO;
+import adcar.com.database.dao.CampaignRunDAO;
 import adcar.com.factory.Factory;
 import adcar.com.model.Ad;
 import adcar.com.model.servertalkers.Ads;
@@ -19,7 +21,10 @@ import adcar.com.model.servertalkers.AreaAd;
 import adcar.com.model.CampaignInfo;
 import adcar.com.model.servertalkers.Campaigns;
 import adcar.com.model.servertalkers.CampaignSchedule;
+import adcar.com.model.servertalkers.ExpiredCampaignResponse;
 import adcar.com.model.servertalkers.GetActiveCampaignResponse;
+import adcar.com.model.servertalkers.GetExpiredCampaignRequest;
+import adcar.com.model.servertalkers.GetExpiredCampaignResponse;
 import adcar.com.network.CustomStringRequest;
 import adcar.com.network.UrlPaths;
 
@@ -30,6 +35,8 @@ public class CampaignHandler extends Handler {
 
     public static AdDAO adDAO = (AdDAO) Factory.getInstance().get(Factory.DAO_AD);
     public static CampaignInfoDAO campaignInfoDAO = (CampaignInfoDAO) Factory.getInstance().get(Factory.DAO_CAMPAIGN_INFO);
+    public static CampaignRunDAO campaignRunDAO = (CampaignRunDAO) Factory.getInstance().get(Factory.DAO_CAMPAIGN_RUN);
+
 
     public void SyncCampaigns(){
         Log.i("CAMPAIGNSYNC", "Trying to sync campaigns");
@@ -62,7 +69,8 @@ public class CampaignHandler extends Handler {
                                     if(campaignInfo.getActive()==1){
                                         campaign.setStatus(0);
                                     }else{
-                                        // TODO : update campain runs to active state 0 - no API calling
+                                        campaign.setStatus(1);
+                                        campaignRunDAO.updateActiveCampaignRuns(campaignInfo.getCampaignInfoId(), 0);
                                     }
                                     campaign.setActive(campaignInfo.getActive());
                                     campaignList.add(campaign);
@@ -88,6 +96,47 @@ public class CampaignHandler extends Handler {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("CAMPAIGNSYNC", "Error while syncing campaigns", error);
+                    }
+                });
+
+        networkManager.addToRequestQueue(csr);
+    }
+
+    public void SyncExpiredCampaigns(){
+        Log.i("EXPIREDCAMPAIGNSYNC", "Trying to sync expired campaigns");
+        GetExpiredCampaignRequest getExpiredCampaignRequest = new GetExpiredCampaignRequest();
+        List<Integer> campaignIds = campaignInfoDAO.getActiveCampaignIds();
+        getExpiredCampaignRequest.setCampaignIds(campaignIds);
+        Log.i("EXPIREDCAMPAIGNSYNC", "Input for expired campaigns sync = "+ campaignIds.toString());
+        String url = UrlPaths.GET_ACTIVE_CAMPAIGNS+ "?" + "json="+ URLEncoder.encode(gson.toJson(getExpiredCampaignRequest));
+        CustomStringRequest csr = new CustomStringRequest(Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        GetExpiredCampaignResponse activeCampaigns = gson.fromJson(response.toString(), GetExpiredCampaignResponse.class);
+
+                        Log.i("EXPIREDCAMPAIGNSYNC", "Raw Response = " + response.toString());
+                        Log.i("EXPIREDCAMPAIGNSYNC", "Response = " + activeCampaigns.toString());
+
+                        for(ExpiredCampaignResponse expiredResponse : activeCampaigns.getExpiredCampaigns()){
+
+                            if(expiredResponse.getActive() == 0){
+                                campaignInfoDAO.updateCampaignActive(expiredResponse.getCampaignId(), expiredResponse.getActive());
+                                campaignRunDAO.deleteByCampaignId(expiredResponse.getCampaignId().toString());
+                                campaignInfoDAO.deleteFromCampaignId(expiredResponse.getCampaignId().toString());
+                            }
+
+
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("EXPIREDCAMPAIGNSYNC", "Error while syncing campaigns", error);
                     }
                 });
 

@@ -30,7 +30,7 @@ public class UncaughtExceptionHandler implements
 //        myContext.startActivity(intent);
 //        //for restarting the Activity
 //        Process.killProcess(Process.myPid());
-//
-//        System.exit(0);
+
+        System.exit(0);
     }
 }

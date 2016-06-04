@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.Date;
 
+import adcar.com.adcar.GPSProcessorService;
 import adcar.com.adcar.MainActivity;
 import adcar.com.adcar.SettingsActivity;
 import adcar.com.database.dao.CoordinateDAO;
@@ -32,11 +33,12 @@ public class AndroidGpsListener implements LocationListener {
     Context context = null;
 
     public static CoordinateDAO coordinateDAO = (CoordinateDAO) Factory.getInstance().get(Factory.DAO_COORDINATE);
-    public static CoordinatesHandler coordinatesHandler = new CoordinatesHandler();
+
     Gson gson = new GsonBuilder().create();
     public static Long lastUpdated = null;
 
     public AndroidGpsListener(MainActivity locationListener, LocationManager locationManager, Context context) {
+        super();
         Log.i("GPS", "inside AndroidGpsListener");
         this.context = context;
         this.locationManager = locationManager;
@@ -65,7 +67,7 @@ public class AndroidGpsListener implements LocationListener {
         }
 
         if(lastUpdated==null || ((location.getTime() - lastUpdated)/1000 > 15)) {
-            coordinatesHandler.makeUseOfNewLocation(getLocation());
+            GPSProcessorService.startGPSLocationDigest(context, location.getLatitude(), location.getLongitude());
             lastUpdated = location.getTime();
         }
     }

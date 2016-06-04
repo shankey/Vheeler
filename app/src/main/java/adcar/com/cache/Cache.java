@@ -1,7 +1,9 @@
 package adcar.com.cache;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +29,11 @@ public class Cache {
 
     public static Integer LAST_AREA = null;
 
+    public static Integer LAST_CAMPAIGN_INFO_ID = null;
+
     public static String deviceId = Utility.getDeviceId();
+
+    public Map<Integer, Bitmap> imageMap = new HashMap<Integer, Bitmap>();
 
     public Set<ExhaustedCampaign> campaignRunSet = new HashSet<ExhaustedCampaign>();
 
@@ -68,5 +74,13 @@ public class Cache {
 
     public void setCampaignRunSet(Set<ExhaustedCampaign> campaignRunSet) {
         this.campaignRunSet = campaignRunSet;
+    }
+
+    public Map<Integer, Bitmap> getImageMap() {
+        return imageMap;
+    }
+
+    public void setImageMap(Map imageMap) {
+        this.imageMap = imageMap;
     }
 }

@@ -8,6 +8,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import adcar.com.adcar.MainActivity;
 import adcar.com.cache.Cache;
 import adcar.com.factory.Factory;
 import adcar.com.database.dao.AreaDAO;
@@ -15,6 +16,8 @@ import adcar.com.model.servertalkers.Area;
 import adcar.com.model.servertalkers.Areas;
 import adcar.com.network.CustomStringRequest;
 import adcar.com.network.UrlPaths;
+import adcar.com.utility.Strings;
+import adcar.com.utility.Utility;
 
 /**
  * Created by aditya on 07/02/16.
@@ -36,8 +39,8 @@ public class AreaHandler extends Handler {
 
                             //////////// LOGS //////////////
                             Log.i("AREASYNC", "New Area Saved ");
-                            Toast.makeText((Context)Factory.getInstance().get(Factory.BASE_CONTEXT),
-                                    "New Area Sync", Toast.LENGTH_SHORT).show();
+                            Utility.sendMessageToHandler(MainActivity.getHandler(), Strings.TOAST, "New Area Sync");
+
                             //////////// END LOGS /////////////////
 
                             areaDAO.deleteArea();

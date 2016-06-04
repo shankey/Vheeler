@@ -1,5 +1,6 @@
 package adcar.com.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -22,7 +23,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "vheeler";
     private static final String BETA_DATABASE_NAME = "/sdcard/vheeler.db";
 
-    public DatabaseHandler(Context context) {
+    private static DatabaseHandler dbHandler=null;
+
+    public static DatabaseHandler getDbHandler(Context context){
+        if(dbHandler == null){
+            dbHandler = new DatabaseHandler(context);
+        }
+        return dbHandler;
+    }
+
+    private DatabaseHandler(Context context) {
         super(context, BETA_DATABASE_NAME, null, DATABASE_VERSION);
         Log.i("DATABASE", "path = "+context.getExternalFilesDir(null).getAbsolutePath() + "/" +DATABASE_NAME);
 

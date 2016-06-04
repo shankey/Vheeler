@@ -52,7 +52,7 @@ public class AreaDAO extends DAO {
         }catch (Exception e){
             Log.i("ERROR", e.toString());
         } finally {
-            db.close();
+            //db.close();
         }
 
     }
@@ -65,7 +65,7 @@ public class AreaDAO extends DAO {
         }catch (Exception e){
             Log.i("ERROR", e.toString());
         } finally {
-            db.close();
+            //db.close();
         }
 
     }
@@ -103,7 +103,8 @@ public class AreaDAO extends DAO {
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        cursor.close();
+        //db.close();
         return new ArrayList<Area>(areas.values());
     }
 }

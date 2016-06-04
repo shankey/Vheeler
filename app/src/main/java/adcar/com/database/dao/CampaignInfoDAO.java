@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
@@ -46,7 +47,7 @@ public class CampaignInfoDAO extends DAO {
             }
         }
 
-        db.close();
+        //db.close();
 
     }
 
@@ -56,7 +57,7 @@ public class CampaignInfoDAO extends DAO {
         String sql = "campaignInfoId=?";
         String[] params = new String[]{campaignInfo.getCampaignInfoId().toString()};
         db.update(TABLE_CAMPAIGN_INFO, values, sql, params);
-        db.close();
+        //db.close();
     }
 
     public void updateCampaignStatus(Integer campaignInfoId, Integer status){
@@ -64,7 +65,16 @@ public class CampaignInfoDAO extends DAO {
 
         String sql = String.format("update " + CampaignInfoDAO.TABLE_CAMPAIGN_INFO + " set "+ KEY_STATUS + "=" + status + " where %s=%s", KEY_CAMPAIGN_INFO_ID, campaignInfoId);
         db.execSQL(sql);
-        db.close();
+        //db.close();
+
+    }
+
+    public void updateCampaignActive(Integer campaignId, Integer active){
+        SQLiteDatabase db = dbHandler.getWritableDatabase();
+
+        String sql = String.format("update " + CampaignInfoDAO.TABLE_CAMPAIGN_INFO + " set "+ KEY_ACTIVE + "=" + active + " where %s=%s", KEY_CAMPAIGN_ID, campaignId);
+        db.execSQL(sql);
+        //db.close();
 
     }
 
@@ -98,7 +108,7 @@ public class CampaignInfoDAO extends DAO {
             Log.i("DATABASE", "row inserted campaign= " + newRowId);
         }
 
-        db.close();
+        //db.close();
 
     }
 
@@ -144,7 +154,9 @@ public class CampaignInfoDAO extends DAO {
         Log.i("DATABASE", cursor.getColumnNames().toString());
 
         List<CampaignInfo> campaigns = getCampaignInfoFromCursor(cursor);
-        db.close();
+
+        cursor.close();
+        //db.close();
         Log.i("DATABASE", campaigns.toString());
         return  campaigns;
     }
@@ -158,7 +170,9 @@ public class CampaignInfoDAO extends DAO {
         List<CampaignInfo> campaignInfoList = getCampaignInfoFromCursor(cursor);
         Log.i("ADSHOW", time);
         Log.i("ADSHOW", campaignInfoList.toString());
-        db.close();
+
+        cursor.close();
+        //db.close();
 
         return campaignInfoList;
     }
@@ -187,6 +201,41 @@ public class CampaignInfoDAO extends DAO {
         }
 
         return campaigns;
+    }
+
+    public List<Integer> getActiveCampaignIds(){
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        String[] columns = new String[]{KEY_CAMPAIGN_ID};
+        String sql = "active=?";
+        String[] params = new String[]{"1"};
+
+        Cursor cursor = db.query(true, TABLE_CAMPAIGN_INFO, columns, sql, params, null, null, null, null);
+        List<Integer> campaingIds = new ArrayList<Integer>();
+        if(cursor.moveToFirst()){
+            do{
+
+                Log.i("DATABASE", cursor.getString(cursor.getColumnIndex(KEY_CAMPAIGN_ID)));
+                campaingIds.add(cursor.getInt(cursor.getColumnIndex(KEY_CAMPAIGN_ID)));
+
+            }while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        //db.close();
+        return campaingIds;
+    }
+
+    public void deleteFromCampaignId(List<String> campaignIdList){
+        SQLiteDatabase db = dbHandler.getWritableDatabase();
+        String args = TextUtils.join(", ", campaignIdList);
+        db.execSQL(String.format("DELETE FROM "+ TABLE_CAMPAIGN_INFO +" WHERE campaign_id IN (%s);", args));
+        //db.close();
+    }
+
+    public void deleteFromCampaignId(String campaignId){
+        List<String> list = new ArrayList<String>();
+        list.add(campaignId);
+        deleteFromCampaignId(list);
     }
 
 }
